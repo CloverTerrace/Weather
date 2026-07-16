@@ -1,0 +1,36 @@
+name: Update Weather Data
+
+on:
+  schedule:
+    # Runs every 10 minutes. GitHub may delay this slightly during high load.
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update-weather:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch latest weather data
+        env:
+          WU_STATION_ID: ${{ secrets.WU_STATION_ID }}
+          WU_API_KEY: ${{ secrets.WU_API_KEY }}
+        run: python scripts/fetch_weather.py
+
+      - name: Commit and push if data changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/weather.json
+          git diff --cached --quiet || git commit -m "Update weather data [skip ci]"
+          git push
