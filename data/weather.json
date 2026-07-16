@@ -1,0 +1,19 @@
+{
+  "stationID": "KPAALIQU74",
+  "obsTimeLocal": "2026-07-16 19:34:48",
+  "obsTimeUtc": "2026-07-16T23:34:48Z",
+  "neighborhood": "Aliquippa",
+  "humidity": 57,
+  "winddir": 350,
+  "uv": 0.0,
+  "solarRadiation": 52.9,
+  "temp": 84,
+  "heatIndex": 86,
+  "windChill": 84,
+  "dewpt": 67,
+  "windSpeed": 2,
+  "windGust": 4,
+  "pressure": 28.14,
+  "precipRate": 0.0,
+  "precipTotal": 0.0
+}
