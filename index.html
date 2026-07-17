@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clover Terrace Weather Station</title>
 <style>
-  /* ---------- customization variables ---------- */
+  /* ---------- Easy customization: edit these variables ---------- */
   :root {
-    --bg-color: #151715;
-    --card-color: #448D44;
-    --accent-color: #C8B4DB;
-    --text-color: #B4DBB4;
-    --muted-color: #DBB4C8;
-    --font-family: Georgia, Verdana, system-ui, -apple-system, sans-serif;
+    --bg-color: #0f1724;
+    --card-color: #182338;
+    --accent-color: #4fb0ff;
+    --text-color: #eef2f7;
+    --muted-color: #93a1b5;
+    --font-family: Georgia, VERDANA, system-ui, -apple-system, sans-serif;
   }
 
   * { box-sizing: border-box; }
@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: background-color 0.6s ease;
   }
 
   h1 {
@@ -166,7 +167,7 @@
 </head>
 <body>
 
-  <h1>Clover Terrace Weather</h1>
+  <h1><span id="weather-icon">🍀</span>Clover Terrace Weather Station</h1>
   <div id="subtitle">Loading...</div>
 
   <div id="error-banner"></div>
@@ -174,6 +175,8 @@
   <div class="grid" id="grid">
     <!-- Cards are injected by JS below -->
   </div>
+
+  <div id="status"></div>
 
   <div class="camera-card">
     <h2>Station Camera</h2>
@@ -187,18 +190,14 @@
     </div>
   </div>
 
-  <div id="status"></div>
-
   <div id="visitor-counter">
-    <span>⛅ Visitors:</span>
+    <span>🌪️ Visitors:</span>
     <span class="visitor-count" id="visitor-count">…</span>
   </div>
 
 <script>
   // Path to the JSON file the GitHub Action keeps updated.
   const DATA_URL = 'data/weather.json';
-  // Path to the rolling history file the fetch script maintains.
-  const HISTORY_URL = 'data/history.json';
   // How often (ms) the page re-fetches the file to check for new data.
   const REFRESH_INTERVAL_MS = 60 * 1000;
 
@@ -219,6 +218,9 @@
     { key: 'solarRadiation', label: 'Solar Rad.',    unit: 'W/m²' },
     { key: 'uv',             label: 'UV Index',      unit: ''   },
   ];
+
+  // Path to the rolling history file the fetch script maintains.
+  const HISTORY_URL = 'data/history.json';
 
   const grid = document.getElementById('grid');
   const subtitle = document.getElementById('subtitle');
@@ -316,6 +318,40 @@
     }
   }
 
+  // ---------- Weather-based color/icon themes ----------
+  // NOTE: The Weather Underground API only gives raw sensor readings
+  // (temp, precip rate, solar radiation, etc.) — not an actual "condition"
+  // label. So this is a heuristic guess at current conditions based on
+  // those numbers, not a real forecast/condition read.
+  const THEMES = {
+    sunny:  { bg: '#3a2f14', card: '#4a3d1c', accent: '#ffcc4d', icon: '☀️' },
+    cloudy: { bg: '#232b36', card: '#2f3947', accent: '#9fb3c8', icon: '☁️' },
+    rainy:  { bg: '#101820', card: '#182430', accent: '#4fb0ff', icon: '🌧️' },
+    snowy:  { bg: '#1b2430', card: '#25313f', accent: '#dff3ff', icon: '❄️' },
+    night:  { bg: '#0a0f1e', card: '#131b2e', accent: '#7d9dff', icon: '🌙' },
+  };
+
+  function classifyWeather(data) {
+    const hour = new Date(data.obsTimeLocal).getHours();
+    const isNight = hour < 6 || hour >= 20;
+    const precip = data.precipRate || 0;
+
+    if (precip > 0.01 && data.temp <= 32) return 'snowy';
+    if (precip > 0.01) return 'rainy';
+    if (isNight) return 'night';
+    if ((data.solarRadiation || 0) > 400) return 'sunny';
+    return 'cloudy';
+  }
+
+  function applyTheme(themeKey) {
+    const theme = THEMES[themeKey] || THEMES.cloudy;
+    const root = document.documentElement.style;
+    root.setProperty('--bg-color', theme.bg);
+    root.setProperty('--card-color', theme.card);
+    root.setProperty('--accent-color', theme.accent);
+    document.getElementById('weather-icon').textContent = theme.icon;
+  }
+
   function renderCards(data) {
     grid.innerHTML = '';
     FIELDS.forEach(field => {
@@ -338,6 +374,7 @@
       const data = await res.json();
 
       renderCards(data);
+      applyTheme(classifyWeather(data));
       subtitle.textContent = data.neighborhood
         ? `Station ${data.stationID} — ${data.neighborhood}`
         : `Station ${data.stationID}`;
