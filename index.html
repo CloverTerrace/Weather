@@ -93,7 +93,49 @@
     width: 100%;
     text-align: center;
   }
+
+  .chart-card {
+    background: var(--card-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  .chart-card h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--muted-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 300px;
+  }
+
+  #visitor-counter {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--card-color);
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--muted-color);
+  }
+
+  #visitor-counter .visitor-count {
+    color: var(--accent-color);
+    font-weight: 700;
+  }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -108,9 +150,23 @@
 
   <div id="status"></div>
 
+  <div class="chart-card">
+    <h2>Temperature &amp; Humidity — Last 7 Days</h2>
+    <div class="chart-wrap">
+      <canvas id="historyChart"></canvas>
+    </div>
+  </div>
+
+  <div id="visitor-counter">
+    <span>⛅ Visitors weathering this page:</span>
+    <span class="visitor-count" id="visitor-count">…</span>
+  </div>
+
 <script>
   // Path to the JSON file the GitHub Action keeps updated.
   const DATA_URL = 'data/weather.json';
+  // Path to the rolling history file the fetch script maintains.
+  const HISTORY_URL = 'data/history.json';
   // How often (ms) the page re-fetches the file to check for new data.
   const REFRESH_INTERVAL_MS = 60 * 1000;
 
@@ -136,6 +192,97 @@
   const subtitle = document.getElementById('subtitle');
   const status = document.getElementById('status');
   const errorBanner = document.getElementById('error-banner');
+
+  let historyChart = null;
+
+  function renderChart(history) {
+    const labels = history.map(entry => entry.time);
+    const tempData = history.map(entry => entry.temp);
+    const humidityData = history.map(entry => entry.humidity);
+
+    const ctx = document.getElementById('historyChart').getContext('2d');
+
+    if (historyChart) {
+      // Update in place rather than recreating, so the chart doesn't flicker on refresh.
+      historyChart.data.labels = labels;
+      historyChart.data.datasets[0].data = tempData;
+      historyChart.data.datasets[1].data = humidityData;
+      historyChart.update();
+      return;
+    }
+
+    historyChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Temperature (°F)',
+            data: tempData,
+            borderColor: '#4fb0ff',
+            backgroundColor: 'rgba(79, 176, 255, 0.1)',
+            yAxisID: 'yTemp',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Humidity (%)',
+            data: humidityData,
+            borderColor: '#ffb84f',
+            backgroundColor: 'rgba(255, 184, 79, 0.1)',
+            yAxisID: 'yHumidity',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: { color: '#93a1b5', maxTicksLimit: 10, autoSkip: true },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          yTemp: {
+            position: 'left',
+            ticks: { color: '#4fb0ff' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            title: { display: true, text: '°F', color: '#4fb0ff' },
+          },
+          yHumidity: {
+            position: 'right',
+            ticks: { color: '#ffb84f' },
+            grid: { display: false },
+            title: { display: true, text: '%', color: '#ffb84f' },
+            min: 0,
+            max: 100,
+          },
+        },
+        plugins: {
+          legend: { labels: { color: '#eef2f7' } },
+        },
+      },
+    });
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch(HISTORY_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const history = await res.json();
+      if (Array.isArray(history) && history.length > 0) {
+        renderChart(history);
+      }
+    } catch (err) {
+      // Don't block the rest of the page if history fails to load —
+      // just leave the chart card empty.
+      console.warn('Could not load history data:', err.message);
+    }
+  }
 
   function renderCards(data) {
     grid.innerHTML = '';
@@ -173,7 +320,37 @@
   }
 
   loadData();
+  loadHistory();
   setInterval(loadData, REFRESH_INTERVAL_MS);
+  // Refresh the chart less often than the current-conditions cards,
+  // since new history entries only land every ~10 minutes anyway.
+  setInterval(loadHistory, 5 * 60 * 1000);
+
+  // ---------- Visitor counter (CounterAPI, free, no signup) ----------
+  // IMPORTANT: change COUNTER_NAMESPACE/COUNTER_NAME to something unique
+  // to you (e.g. your GitHub username + repo name). CounterAPI's free tier
+  // is public, so a generic name could be shared/incremented by other sites.
+  const COUNTER_NAMESPACE = 'change-me-yourusername';
+  const COUNTER_NAME = 'weather-station-visits';
+
+  async function initVisitorCounter() {
+    const el = document.getElementById('visitor-count');
+    try {
+      const res = await fetch(
+        `https://api.counterapi.dev/v1/${COUNTER_NAMESPACE}/${COUNTER_NAME}/up`
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      el.textContent = data.value;
+    } catch (err) {
+      el.textContent = '—';
+      console.warn('Visitor counter unavailable:', err.message);
+    }
+  }
+
+  // Runs once per page load — intentionally NOT tied to the refresh
+  // intervals above, so revisits/auto-refreshes don't inflate the count.
+  initVisitorCounter();
 </script>
 
 </body>
