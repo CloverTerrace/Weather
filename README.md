@@ -1,10 +1,8 @@
-# Home Weather Station Dashboard
+# Clover Terrace Weather Dashboard, created by Alyssa Rozsa
 
-A minimal GitHub Pages site that shows near-live conditions from your Ecowitt
-station via the Weather Underground API — no server, no CORS issues, no
-paid hosting.
+A live weather page for Clover Terrace, a higher elevation micro-climate within Aliquippa. Frequently updated throughout the day to provide current conditions from an Ecowitt station via the Weather Underground API.
 
-## How it works
+## how to recreate this page for yourself
 
 1. `scripts/fetch_weather.py` calls the Weather Underground PWS "current
    conditions" API for your station and saves the result to
@@ -62,7 +60,7 @@ want to adjust `MAX_HISTORY_ENTRIES` in `fetch_weather.py` to keep the
 same number of days of history — e.g. if you switch to fetching every 5
 minutes, double it to keep 7 days' worth.
 
-## Visitor counter
+## visitor counter
 
 The footer counter uses [CounterAPI](https://counterapi.dev)'s free v1
 endpoint, which needs no signup or API key and works directly from
@@ -85,7 +83,7 @@ A couple of caveats worth knowing:
   tied to the auto-refresh timers), so leaving the tab open won't
   inflate the number.
 
-## Camera snapshot
+## camera snapshot
 
 If your station has a camera accessory, `scripts/fetch_camera.py` pulls
 the latest snapshot from **Ecowitt's own cloud API** (this is separate
@@ -94,7 +92,7 @@ data feed) and saves it as `data/camera.jpg`, which the page displays
 with cache-busting so it always shows the freshest image rather than a
 browser-cached one.
 
-**Setup:**
+**setup:**
 1. Log into https://www.ecowitt.net with the account tied to your
    console/camera, and create an **Application Key** and **API Key**
    under the Member Center / API section.
@@ -114,7 +112,7 @@ the actual key path and adjust `find_image_url()` if needed. This step
 is also set to not block the weather-data commit if it fails, so a
 camera hiccup won't stop your temperature/humidity updates.
 
-## Customizing
+## customizing
 
 - **Which fields show up, and their order/labels:** edit the `FIELDS`
   array near the top of the `<script>` block in `index.html`.
@@ -127,3 +125,6 @@ camera hiccup won't stop your temperature/humidity updates.
 - **Metric units:** change `units=e` to `units=m` in
   `scripts/fetch_weather.py`'s URL, and update the unit labels in
   `index.html` accordingly (°C, km/h, mm, hPa).
+
+## compatibility with other personal weather stations
+I haven't tested it, but I'm sure this page template will work with just about any PWS (personal weather station) that is capable of sending data to websites like weatherunderground, Findu, CWOP, etc. You really just need to be able to generate API keys.
