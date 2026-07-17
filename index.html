@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clover Terrace Weather</title>
+<title>Clover Terrace Weather Station</title>
 <style>
   /* ---------- Easy customization: edit these variables ---------- */
   :root {
@@ -134,6 +134,33 @@
     color: var(--accent-color);
     font-weight: 700;
   }
+
+  .camera-card {
+    background: var(--card-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    text-align: center;
+  }
+
+  .camera-card h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--muted-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .camera-card img {
+    max-width: 100%;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 </head>
@@ -148,6 +175,11 @@
     <!-- Cards are injected by JS below -->
   </div>
 
+  <div class="camera-card">
+    <h2>Station Camera</h2>
+    <img id="camera-img" src="data/camera.jpg" alt="Latest snapshot from the weather station camera">
+  </div>
+
   <div class="chart-card">
     <h2>Temperature &amp; Humidity — Last 7 Days</h2>
     <div class="chart-wrap">
@@ -155,8 +187,8 @@
     </div>
   </div>
 
- <div id="status"></div>
-  
+  <div id="status"></div>
+
   <div id="visitor-counter">
     <span>⛅ Visitors weathering this page:</span>
     <span class="visitor-count" id="visitor-count">…</span>
@@ -312,6 +344,11 @@
 
       errorBanner.style.display = 'none';
       status.textContent = `Last observation: ${data.obsTimeLocal || 'unknown'} · Page checked: ${new Date().toLocaleTimeString()}`;
+
+      // Cache-bust the camera image so the browser re-fetches the file
+      // instead of showing a stale cached copy of the same filename.
+      const cameraImg = document.getElementById('camera-img');
+      cameraImg.src = `data/camera.jpg?t=${Date.now()}`;
     } catch (err) {
       errorBanner.textContent = `Couldn't load weather data: ${err.message}`;
       errorBanner.style.display = 'block';
@@ -330,7 +367,7 @@
   // IMPORTANT: change COUNTER_NAMESPACE/COUNTER_NAME to something unique
   // to you (e.g. your GitHub username + repo name). CounterAPI's free tier
   // is public, so a generic name could be shared/incremented by other sites.
-  const COUNTER_NAMESPACE = 'Clover-Terrace-WX';
+  const COUNTER_NAMESPACE = 'change-me-yourusername';
   const COUNTER_NAME = 'weather-station-visits';
 
   async function initVisitorCounter() {
