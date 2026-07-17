@@ -84,5 +84,14 @@
     "windGust": 2,
     "winddir": 16,
     "pressure": 28.27
+  },
+  {
+    "time": "2026-07-17 11:00:40",
+    "temp": 74,
+    "humidity": 71,
+    "windSpeed": 0,
+    "windGust": 4,
+    "winddir": 353,
+    "pressure": 28.27
   }
 ]
