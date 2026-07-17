@@ -17,6 +17,11 @@ import urllib.error
 STATION_ID = os.environ.get("WU_STATION_ID")
 API_KEY = os.environ.get("WU_API_KEY")
 
+# How many history entries to keep. At a 10-minute fetch interval,
+# 1008 entries = 7 days of history. Lower this if you want a smaller
+# repo/file size, or raise it if you fetch less often and want more days.
+MAX_HISTORY_ENTRIES = 1008
+
 if not STATION_ID or not API_KEY:
     print("ERROR: WU_STATION_ID and WU_API_KEY must be set as environment variables.", file=sys.stderr)
     sys.exit(1)
@@ -73,7 +78,32 @@ def main():
     with open("data/weather.json", "w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"Wrote data/weather.json for station {output['stationID']} at {output['obsTimeLocal']}")
+    # Append this reading to the rolling history file used for the chart.
+    history_path = "data/history.json"
+    history = []
+    if os.path.exists(history_path):
+        try:
+            with open(history_path, "r") as f:
+                history = json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            history = []
+
+    history.append({
+        "time": output["obsTimeLocal"],
+        "temp": output["temp"],
+        "humidity": output["humidity"],
+        "windSpeed": output["windSpeed"],
+        "pressure": output["pressure"],
+    })
+
+    # Keep only the most recent MAX_HISTORY_ENTRIES readings.
+    history = history[-MAX_HISTORY_ENTRIES:]
+
+    with open(history_path, "w") as f:
+        json.dump(history, f, indent=2)
+
+    print(f"Wrote data/weather.json and data/history.json ({len(history)} entries) "
+          f"for station {output['stationID']} at {output['obsTimeLocal']}")
 
 if __name__ == "__main__":
     main()
