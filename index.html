@@ -359,9 +359,10 @@
     });
   }
 
-  async function loadHistory() {
+  async function loadHistory(forceRefresh = false) {
     try {
-      const res = await fetch(HISTORY_URL, { cache: 'no-store' });
+      const url = forceRefresh ? `${HISTORY_URL}?t=${Date.now()}` : HISTORY_URL;
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const history = await res.json();
       if (Array.isArray(history) && history.length > 0) {
@@ -620,9 +621,10 @@
     });
   }
 
-  async function loadData() {
+  async function loadData(forceRefresh = false) {
     try {
-      const res = await fetch(DATA_URL, { cache: 'no-store' });
+      const url = forceRefresh ? `${DATA_URL}?t=${Date.now()}` : DATA_URL;
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
@@ -653,8 +655,8 @@
     if (isRefreshing) return;
     isRefreshing = true;
     refreshBtn.disabled = true;
-    await loadData();
-    await loadHistory();
+    await loadData(true);
+    await loadHistory(true);
   }
 
   loadData();
