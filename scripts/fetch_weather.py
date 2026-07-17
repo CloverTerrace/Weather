@@ -93,6 +93,8 @@ def main():
         "temp": output["temp"],
         "humidity": output["humidity"],
         "windSpeed": output["windSpeed"],
+        "windGust": output["windGust"],
+        "winddir": output["winddir"],
         "pressure": output["pressure"],
     })
 
