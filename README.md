@@ -2,7 +2,7 @@
 
 A live weather page for Clover Terrace, a higher elevation micro-climate within Aliquippa. Frequently updated throughout the day to provide current conditions from an Ecowitt station via the Weather Underground API.
 
-## how to recreate this page for yourself 🌪️
+## how it works 🌪️
 
 1. `scripts/fetch_weather.py` calls the Weather Underground PWS "current
    conditions" API for your station and saves the result to
@@ -13,7 +13,7 @@ A live weather page for Clover Terrace, a higher elevation micro-climate within 
    from the same GitHub Pages domain, there's no CORS problem, and it's
    nearly instant to load.
 
-## setup ⛈️
+## how to re-create this page, using your own PWS data ⛈️
 
 1. **Create the repo.** Push these files to a new GitHub repository
    (public or private both work, but Pages on a free plan requires public
@@ -81,7 +81,7 @@ A couple of caveats worth knowing:
   increments it again.
 - The counter only increments once per page load (it's deliberately not
   tied to the auto-refresh timers), so leaving the tab open won't
-  inflate the number.
+  inflate the number. I may change this in the future to a more reliable type of counter.
 
 ## camera snapshot 🌤️
 
@@ -90,7 +90,7 @@ the latest snapshot from **Ecowitt's own cloud API** (this is separate
 from Weather Underground/Findu — the camera image isn't part of that
 data feed) and saves it as `data/camera.jpg`, which the page displays
 with cache-busting so it always shows the freshest image rather than a
-browser-cached one.
+browser-cached one. If your weather camera is not the HP10 Ecowitt camera used for testimg this setup, this is not guaranteed to work. In theory, plugging in a usable API key and replacing the Ecowitt coding with coding relevent to fetching data from your weathercam brand of choic should be the only requirements, feel free to tweak it as needed or remove the camera sections of code altogether if you don't have a weather camera.
 
 **setup:**
 1. Log into https://www.ecowitt.net with the account tied to your
@@ -127,4 +127,4 @@ camera hiccup won't stop your temperature/humidity updates.
   `index.html` accordingly (°C, km/h, mm, hPa).
 
 ## compatibility with other personal weather stations ☔
-I haven't tested it, but I'm sure this page template will work with just about any PWS (personal weather station) that is capable of sending data to websites like weatherunderground, Findu, CWOP, etc. You really just need to be able to generate API keys.
+I haven't tested it, but I'm sure this page template will work with just about any PWS (personal weather station) that is capable of sending data to websites like weatherunderground, Findu, CWOP, etc. You really just need to be able to generate API keys. Remember, if you're pulling data directly from a different brand of personal weather station you may need to change the parts of code that are pulling data from the Ecowitt API.
