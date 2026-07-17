@@ -1,0 +1,12 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Clover Terrace WX",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "CloverWX",
+  "start_url": "/",
+  "theme_color": "#a396bd",
+  "description": "Clover Terrace Weather Viewer"
+}
