@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home Weather Station</title>
+<title>Clover Terrace Weather Station</title>
 <style>
   /* ---------- Easy customization: edit these variables ---------- */
   :root {
@@ -167,7 +167,7 @@
 </head>
 <body>
 
-  <h1><span id="weather-icon">🌦️</span> My Weather Station</h1>
+  <h1><span id="weather-icon">🍀</span> Clover Terrace Weather Station</h1>
   <div id="subtitle">Loading...</div>
 
   <div id="error-banner"></div>
@@ -176,7 +176,7 @@
     <!-- Cards are injected by JS below -->
   </div>
 
-  <div id="status"></div>
+  
 
   <div class="camera-card">
     <h2>Station Camera</h2>
@@ -211,8 +211,10 @@
     </div>
   </div>
 
+  <div id="status"></div>
+
   <div id="visitor-counter">
-    <span>⛅ Visitors weathering this page:</span>
+    <span>🌪️ Visitors:</span>
     <span class="visitor-count" id="visitor-count">…</span>
   </div>
 
@@ -625,7 +627,7 @@
   // IMPORTANT: change COUNTER_NAMESPACE/COUNTER_NAME to something unique
   // to you (e.g. your GitHub username + repo name). CounterAPI's free tier
   // is public, so a generic name could be shared/incremented by other sites.
-  const COUNTER_NAMESPACE = 'change-me-yourusername';
+  const COUNTER_NAMESPACE = 'CloverTerraceWXStation';
   const COUNTER_NAME = 'weather-station-visits';
 
   async function initVisitorCounter() {
