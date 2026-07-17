@@ -5,4 +5,26 @@
         "package_name": "io.github.cloverterrace.twa",
         "sha256_cert_fingerprints": ["6A:8A:2E:E4:50:81:28:36:04:91:04:EB:CB:38:8E:B2:6D:D6:63:B7:3A:E2:5F:7F:04:28:E9:20:21:87:69:85"]
       }
-    }]
+    }
+
+
+{
+  "name": "Clover Terrace Weather Station",
+  "short_name": "CloverWeather",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1724",
+  "theme_color": "#0f1724",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
