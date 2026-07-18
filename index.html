@@ -669,27 +669,24 @@
   // Attach click handler to refresh button
   refreshBtn.addEventListener('click', handleRefreshClick);
 
-  // ---------- Visitor counter (CounterAPI, free, no signup) ----------
-  // IMPORTANT: change COUNTER_NAMESPACE/COUNTER_NAME to something unique
-  // to you (e.g. your GitHub username + repo name). CounterAPI's free tier
-  // is public, so a generic name could be shared/incremented by other sites.
-  const COUNTER_NAMESPACE = 'CloverTerraceWXStation';
-  const COUNTER_NAME = 'weather-station-visits';
+// ---------- Visitor counter (hitscounter.dev, free, no signup) ----------
+// The url param below must exactly match this page's live URL, URL-encoded.
+const HITSCOUNTER_URL = 'https://cloverterrace.github.io/weather/';
 
-  async function initVisitorCounter() {
-    const el = document.getElementById('visitor-count');
-    try {
-      const res = await fetch(
-        `https://api.counterapi.dev/v1/${COUNTER_NAMESPACE}/${COUNTER_NAME}/up`
-      );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      el.textContent = data.value;
-    } catch (err) {
-      el.textContent = '—';
-      console.warn('Visitor counter unavailable:', err.message);
-    }
+async function initVisitorCounter() {
+  const el = document.getElementById('visitor-count');
+  try {
+    const res = await fetch(
+      `https://hitscounter.dev/api/hit?url=${encodeURIComponent(HITSCOUNTER_URL)}&label=Visitors&icon=cloud-fill&color=%234fb0ff&json=true`
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    el.textContent = data.message;
+  } catch (err) {
+    el.textContent = '—';
+    console.warn('Visitor counter unavailable:', err.message);
   }
+}
 
   // Runs once per page load — intentionally NOT tied to the refresh
   // intervals above, so revisits/auto-refreshes don't inflate the count.
