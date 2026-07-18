@@ -62,7 +62,17 @@ minutes, double it to keep 7 days' worth.
 
 ## visitor counter ⛅
 
-The footer counter uses [HitsCounter](https://hitscounter.dev/) to count page visits via a unique URL. You need to adjust 'HITS_COUNTER_URL' to match your oage URL exactly in ordr for this to work properly. 
+The footer counter uses [HitsCounter](https://hitscounter.dev/) to count
+page visits via a unique URL — no signup, no API key needed! You will need to update
+the `HITSCOUNTER_URL` constant near the bottom of the `<script>` block in
+`index.html` to match your page's live URL *exactly* (including the
+trailing slash) in order for this to work properly. If your Pages URL
+ever changes, update this constant too, or you'll start a fresh count
+under the new URL.
+
+You can also customize the counter's appearance by editing the `label`,
+`icon`, and `color` params in the fetch URL inside `initVisitorCounter()`
+— see https://hitscounter.dev/ for the full icon picker and color list. 
 
 ## camera snapshot 🌤️
 
