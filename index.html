@@ -567,15 +567,20 @@
   const THUNDERSTORM_PRECIP_INHR = 0.1; // ...combined with precip rate above this = thunderstorm theme
   const EXTREME_HEAT_TEMP_F = 95;      // temp (or heat index, if higher) at/above this = extreme heat theme
 
-  const THEMES = {
-    sunny:        { bg: '#3a2f14', card: '#4a3d1c', accent: '#ffcc4d', icon: '☀️' },
-    extremeHeat:  { bg: '#4a1907', card: '#5c2712', accent: '#ff6b35', icon: '🔥☀️' },
-    cloudy:       { bg: '#6D96C0', card: '#D5E1ED', accent: '#4D80B3', icon: '☁️' },
-    rainy:        { bg: '#101820', card: '#182430', accent: '#4fb0ff', icon: '🌧️' },
-    snowy:        { bg: '#1b2430', card: '#25313f', accent: '#dff3ff', icon: '❄️' },
-    night:        { bg: '#0a0f1e', card: '#131b2e', accent: '#7d9dff', icon: '🌙' },
-    windy:        { bg: '#1c2b28', card: '#25372f', accent: '#7fe0c0', icon: '💨' },
-    thunderstorm: { bg: '#181022', card: '#241a33', accent: '#ffffff', icon: '⛈️' },
+const THEMES = {
+    sunny:            { bg: '#3a2f14', card: '#4a3d1c', accent: '#ffcc4d', icon: '☀️' },
+    extremeHeat:      { bg: '#4a1907', card: '#5c2712', accent: '#ff6b35', icon: '🥵' },
+    extremeHeatNight: { bg: '#2e1005', card: '#3d1a0c', accent: '#ff8659', icon: '🥵🌙' },
+    cloudy:           { bg: '#232b36', card: '#2f3947', accent: '#9fb3c8', icon: '☁️' },
+    rainy:            { bg: '#101820', card: '#182430', accent: '#4fb0ff', icon: '🌧️' },
+    rainyNight:       { bg: '#0a1015', card: '#101c26', accent: '#3d8bcf', icon: '🌧️🌙' },
+    snowy:            { bg: '#1b2430', card: '#25313f', accent: '#dff3ff', icon: '❄️' },
+    snowyNight:       { bg: '#0f151c', card: '#182530', accent: '#a8d8f0', icon: '❄️🌙' },
+    night:            { bg: '#0a0f1e', card: '#131b2e', accent: '#7d9dff', icon: '🌙' },
+    windy:            { bg: '#1c2b28', card: '#25372f', accent: '#7fe0c0', icon: '💨' },
+    windyNight:       { bg: '#111d1a', card: '#1a2c26', accent: '#5fc7a3', icon: '💨🌙' },
+    thunderstorm:      { bg: '#181022', card: '#241a33', accent: '#c79bff', icon: '⛈️' },
+    thunderstormNight: { bg: '#0d0a17', card: '#191228', accent: '#9b7dff', icon: '⛈️🌙' },
   };
 
   function classifyWeather(data) {
@@ -585,13 +590,21 @@
     const wind = Math.max(data.windSpeed || 0, data.windGust || 0);
     const feelsLike = Math.max(data.temp || 0, data.heatIndex || 0);
 
-    // Checked first/most specific to least, so a severe combo (storm) wins
-    // over a single-factor read (just rainy, or just windy).
-    if (precip >= THUNDERSTORM_PRECIP_INHR && wind >= THUNDERSTORM_WIND_MPH) return 'thunderstorm';
-    if (precip > 0.01 && data.temp <= 32) return 'snowy';
-    if (precip > 0.01) return 'rainy';
-    if (wind >= WINDY_WIND_MPH) return 'windy';
-    if (feelsLike >= EXTREME_HEAT_TEMP_F) return 'extremeHeat';
+    // First figure out the "base" condition, independent of day/night —
+    // then combine it with isNight below. This way every condition gets
+    // an automatic night counterpart without repeating the thresholds.
+    let condition = null;
+    if (precip >= THUNDERSTORM_PRECIP_INHR && wind >= THUNDERSTORM_WIND_MPH) condition = 'thunderstorm';
+    else if (precip > 0.01 && data.temp <= 32) condition = 'snowy';
+    else if (precip > 0.01) condition = 'rainy';
+    else if (wind >= WINDY_WIND_MPH) condition = 'windy';
+    else if (feelsLike >= EXTREME_HEAT_TEMP_F) condition = 'extremeHeat';
+
+    if (condition) {
+      return isNight ? `${condition}Night` : condition;
+    }
+
+    // No active condition — fall back to plain night/sunny/cloudy.
     if (isNight) return 'night';
     if ((data.solarRadiation || 0) > 400) return 'sunny';
     return 'cloudy';
