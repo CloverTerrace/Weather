@@ -677,7 +677,8 @@ async function initVisitorCounter() {
   const el = document.getElementById('visitor-count');
   try {
     const res = await fetch(
-      `https://hitscounter.dev/api/hit?url=${encodeURIComponent(HITSCOUNTER_URL)}&label=Visitors&icon=cloud-fill&color=%234fb0ff&json=true`
+      `https://hitscounter.dev/api/hit?url=${encodeURIComponent(HITSCOUNTER_URL)}&label=Visitors&icon=cloud-fill&color=%234fb0ff&json=true`,
+      { cache: 'no-store' }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
