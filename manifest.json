@@ -1,6 +1,6 @@
 {
   "name": "Clover Terrace Weather Station",
-  "short_name": "CloverWeather",
+  "short_name": "Clover Wx",
   "start_url": "/weather/",
   "scope": "/weather/",
   "display": "standalone",
