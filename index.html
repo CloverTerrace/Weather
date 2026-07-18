@@ -700,19 +700,19 @@
   const EXTREME_HEAT_TEMP_F = 95;      // temp (or heat index, if higher) at/above this = extreme heat theme
 
 const THEMES = {
-    sunny:            { bg: '#a4ebfc', card: '#f2fdff', accent: '#ffcc4d', icon: '☀️' },
-    extremeHeat:      { bg: '#4a1907', card: '#5c2712', accent: '#ff6b35', icon: '🔥☀️' },
-    extremeHeatNight: { bg: '#2e1005', card: '#3d1a0c', accent: '#ff8659', icon: '🔥🌙' },
-    cloudy:           { bg: '#232b36', card: '#2f3947', accent: '#9fb3c8', icon: '☁️' },
-    rainy:            { bg: '#101820', card: '#182430', accent: '#4fb0ff', icon: '🌧️' },
-    rainyNight:       { bg: '#0a1015', card: '#101c26', accent: '#3d8bcf', icon: '🌧️🌙' },
-    snowy:            { bg: '#1b2430', card: '#25313f', accent: '#dff3ff', icon: '❄️' },
-    snowyNight:       { bg: '#0f151c', card: '#182530', accent: '#a8d8f0', icon: '❄️🌙' },
-    night:            { bg: '#0a0f1e', card: '#131b2e', accent: '#7d9dff', icon: '🌙' },
-    windy:            { bg: '#1c2b28', card: '#25372f', accent: '#7fe0c0', icon: '💨' },
-    windyNight:       { bg: '#111d1a', card: '#1a2c26', accent: '#5fc7a3', icon: '💨🌙' },
-    thunderstorm:      { bg: '#181022', card: '#241a33', accent: '#c79bff', icon: '⛈️' },
-    thunderstormNight: { bg: '#0d0a17', card: '#191228', accent: '#9b7dff', icon: '⛈️🌙' },
+    sunny:            { bg: '#a4ebfc', card: '#f2fdff', accent: '#ffcc4d', muted: '#000000', icon: '☀️' },
+    extremeHeat:      { bg: '#4a1907', card: '#5c2712', accent: '#ff6b35', muted: '#ffcc4d', icon: '🔥☀️' },
+    extremeHeatNight: { bg: '#2e1005', card: '#3d1a0c', accent: '#ff8659', muted: '#ffcc4d', icon: '🔥🌙' },
+    cloudy:           { bg: '#232b36', card: '#2f3947', accent: '#9fb3c8', muted: '#ffcc4d', icon: '☁️' },
+    rainy:            { bg: '#101820', card: '#182430', accent: '#4fb0ff', muted: '#ffcc4d', icon: '🌧️' },
+    rainyNight:       { bg: '#0a1015', card: '#101c26', accent: '#3d8bcf', muted: '#ffcc4d', icon: '🌧️🌙' },
+    snowy:            { bg: '#1b2430', card: '#25313f', accent: '#dff3ff', muted: '#ffcc4d', icon: '❄️' },
+    snowyNight:       { bg: '#0f151c', card: '#182530', accent: '#a8d8f0', muted: '#ffcc4d', icon: '❄️🌙' },
+    night:            { bg: '#0a0f1e', card: '#131b2e', accent: '#7d9dff', muted: '#ffcc4d', icon: '🌙' },
+    windy:            { bg: '#1c2b28', card: '#25372f', accent: '#7fe0c0', muted: '#ffcc4d', icon: '💨' },
+    windyNight:       { bg: '#111d1a', card: '#1a2c26', accent: '#5fc7a3', muted: '#ffcc4d', icon: '💨🌙' },
+    thunderstorm:     { bg: '#181022', card: '#241a33', accent: '#c79bff', muted: '#ffcc4d', icon: '⛈️' },
+    thunderstormNight: { bg: '#0d0a17', card: '#191228', accent: '#9b7dff', muted: '#ffcc4d', icon: '⛈️🌙' },
   };
 
   function classifyWeather(data) {
@@ -748,6 +748,7 @@ const THEMES = {
     root.setProperty('--bg-color', theme.bg);
     root.setProperty('--card-color', theme.card);
     root.setProperty('--accent-color', theme.accent);
+    root.setProperty('--muted-color', theme.muted);
     document.getElementById('weather-icon').textContent = theme.icon;
   }
 
