@@ -257,6 +257,19 @@
     <img id="camera-img" src="data/camera.jpg" alt="Latest snapshot from the weather station camera">
   </div>
 
+<div class="camera-card">
+    <h2>Local Forecast (15001)</h2>
+    <div class="forecast-periods" id="forecast-periods">
+      <!-- Forecast period cards are injected by JS below -->
+    </div>
+  </div>
+
+  <div class="camera-card outlook-card">
+    <h2>SPC Day 1 Convective Outlook</h2>
+    <img id="outlook-img" src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="NOAA Storm Prediction Center Day 1 Convective Outlook">
+    <div class="outlook-note">Live image from NOAA's Storm Prediction Center — updates automatically as SPC issues new outlooks.</div>
+  </div>
+  
   <div class="chart-card">
     <h2>Temperature &amp; Humidity — Last 7 Days</h2>
     <div class="chart-wrap">
@@ -603,6 +616,34 @@
     });
   }
 
+
+  async function loadForecast(forceRefresh = false) {
+    const container = document.getElementById('forecast-periods');
+    try {
+      const url = forceRefresh ? `data/forecast.json?t=${Date.now()}` : 'data/forecast.json';
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const periods = await res.json();
+
+      container.innerHTML = '';
+      periods.forEach(period => {
+        const card = document.createElement('div');
+        card.className = 'forecast-period';
+        card.innerHTML = `
+          <div class="period-name">${period.name}</div>
+          <div class="period-temp">${period.temperature}°${period.temperatureUnit}</div>
+          <div class="period-short">${period.shortForecast}</div>
+          <div class="period-wind">${period.windSpeed} ${period.windDirection}</div>
+        `;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.warn('Could not load forecast data:', err.message);
+      container.innerHTML = '<div class="forecast-period">Forecast unavailable</div>';
+    }
+  }
+
+
   // ---------- Weather-based color/icon themes ----------
   // NOTE: The Weather Underground API only gives raw sensor readings
   // (temp, precip rate, wind speed, solar radiation, etc.) — not an actual
@@ -718,14 +759,24 @@ const THEMES = {
     refreshBtn.disabled = true;
     await loadData(true);
     await loadHistory(true);
+    await loadForecast(true);
+    document.getElementById('outlook-img').src =
+      `https://www.spc.noaa.gov/products/outlook/day1otlk.gif?t=${Date.now()}`;
   }
 
   loadData();
   loadHistory();
+  loadForecast();
   setInterval(loadData, REFRESH_INTERVAL_MS);
   // Refresh the chart less often than the current-conditions cards,
   // since new history entries only land every ~10 minutes anyway.
   setInterval(loadHistory, 5 * 60 * 1000);
+  // The forecast and outlook only change a few times a day.
+  setInterval(loadForecast, 30 * 60 * 1000);
+  setInterval(() => {
+    document.getElementById('outlook-img').src =
+      `https://www.spc.noaa.gov/products/outlook/day1otlk.gif?t=${Date.now()}`;
+  }, 30 * 60 * 1000);
 
   // Attach click handler to refresh button
   refreshBtn.addEventListener('click', handleRefreshClick);
