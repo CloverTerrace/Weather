@@ -305,7 +305,7 @@
 
   <div class="camera-card outlook-card">
     <h2>SPC Day 1 Convective Outlook</h2>
-    <img id="outlook-img" src="https://www.spc.noaa.gov/products/outlook/day1otlk_1630.png" alt="NOAA Storm Prediction Center Day 1 Convective Outlook">
+    <img id="outlook-img" src="data/outlook.png" alt="NOAA Storm Prediction Center Day 1 Convective Outlook">
     <div class="outlook-note">Live image from NOAA's Storm Prediction Center — updates automatically as SPC issues new outlooks.</div>
   </div>
   
@@ -805,7 +805,7 @@ const THEMES = {
     await loadHistory(true);
     await loadForecast(true);
     document.getElementById('outlook-img').src =
-      `https://www.spc.noaa.gov/products/outlook/day1otlk.gif?t=${Date.now()}`;
+      `data/outlook.png?t=${Date.now()}`;
   }
 
   loadData();
@@ -819,7 +819,7 @@ const THEMES = {
   setInterval(loadForecast, 30 * 60 * 1000);
   setInterval(() => {
     document.getElementById('outlook-img').src =
-      `https://www.spc.noaa.gov/products/outlook/day1otlk.gif?t=${Date.now()}`;
+      `data/outlook.png?t=${Date.now()}`;
   }, 30 * 60 * 1000);
 
 // Chart.js sizes canvases based on the container's dimensions at creation
