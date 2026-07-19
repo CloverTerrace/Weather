@@ -268,24 +268,36 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
   }
 
   .range-btn {
     background: rgba(255, 255, 255, 0.06);
     border: none;
     color: var(--muted-color);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
+    white-space: nowrap;
   }
 
   .range-btn.active {
     background: var(--accent-color);
     color: var(--bg-color);
+  }
+
+  @media (max-width: 480px) {
+    .range-buttons {
+      gap: 0.3rem;
+    }
+
+    .range-btn {
+      padding: 0.3rem 0.55rem;
+      font-size: 0.7rem;
+    }
   }
   
   .outlook-scroll {
