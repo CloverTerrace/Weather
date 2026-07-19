@@ -918,7 +918,7 @@ const THEMES = {
 
     // No active condition — fall back to plain night/sunny/cloudy.
     if (isNight) return 'night';
-    if ((data.solarRadiation || 0) > 400) return 'sunny';
+    if ((data.solarRadiation || 0) > 650) return 'sunny';
     return 'cloudy';
   }
 
@@ -998,6 +998,7 @@ const THEMES = {
   setInterval(loadForecast, 30 * 60 * 1000);
   setInterval(refreshOutlookImages, 30 * 60 * 1000);
   initOutlookCarousel();
+  initRangeButtons();
 
 // Chart.js sizes canvases based on the container's dimensions at creation
   // time — since these charts start out inside a collapsed <details>, they
@@ -1009,6 +1010,7 @@ const THEMES = {
       windChart?.resize();
       windRoseChart?.resize();
       pressureChart?.resize();
+      solarChart?.resize();
     }
   });
   
