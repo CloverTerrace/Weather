@@ -1056,11 +1056,13 @@ const THEMES = {
   const chartsDropdown = document.querySelector('.charts-dropdown');
   chartsDropdown.addEventListener('toggle', () => {
     if (chartsDropdown.open) {
-      historyChart?.resize();
-      windChart?.resize();
-      windRoseChart?.resize();
-      pressureChart?.resize();
-      solarChart?.resize();
+      // Chart.js can't correctly size a canvas that was created while its
+      // container was hidden (a closed <details> behaves like display:none).
+      // Rather than just resizing the already-broken charts, destroy and
+      // recreate them now that the container is actually visible.
+      [historyChart, windChart, windRoseChart, pressureChart, solarChart].forEach(c => c?.destroy());
+      historyChart = windChart = windRoseChart = pressureChart = solarChart = null;
+      renderAllCharts();
     }
   });
   
