@@ -142,7 +142,7 @@
   }
 
   .charts-dropdown summary::before {
-    content: 'â–¶';
+    content: '&#9654;';
     display: inline-block;
     margin-right: 0.6rem;
     transition: transform 0.2s ease;
@@ -356,7 +356,7 @@
 </head>
 <body>
 
-  <h1><span id="weather-icon">ðŸ€</span> Clover Terrace Weather Station</h1>
+  <h1><span id="weather-icon">&#127808;</span> Clover Terrace Weather Station</h1>
   <div id="subtitle">Loading...</div>
 
   <div id="error-banner"></div>
@@ -418,6 +418,299 @@
     </div>
 
     <div class="chart-card">
+      <h2 id="historyChart-title">Temperature &amp; Humidity &#8212; Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="historyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="windChart-title">Wind Speed &amp; Gusts &#8212; Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="windChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="windRoseChart-title">Wind Direction &#8212; Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="windRoseChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="pressureChart-title">Barometric Pressure &#8212; Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="pressureChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="solarChart-title">Solar Illumination &#8212; Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="solarChart"></canvas>
+      </div>
+    </div>
+  </details>
+
+  <div id="status"></div>
+
+  <button id="refresh-btn">&#127786;&#65039; Refresh Now</button>
+
+  <div id="visitor-counter">
+  <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fcloverterrace.github.io%2Fweather%2F&label=Visitors&icon=cloud-fill&color=%234fb0ff" alt="Visitor count">
+</div>
+
+<script>
+  // Path to the JSON file the GitHub Action keeps updated.
+  const DATA_URL = 'data/weather.json';
+  // How often (ms) the page re-fetches the file to check for new data.
+  const REFRESH_INTERVAL_MS = 60 * 1000;
+
+  // Define which fields to show, in order, and how to label/format them.
+  // Add, remove, or reorder entries here to customize the dashboard.
+  const FIELDS = [
+    { key: 'temp',           label: 'Temperature',   unit: '&#176;F' },
+    { key: 'heatIndex',      label: 'Heat Index',    unit: '&#176;F' , showIf: data => data.temp >= 80 && data.heatIndex > data.temp },
+    { key: 'windChill',      label: 'Wind Chill',    unit: '&#176;F' , showIf: data => data.temp <= 50 && data.windSpeed >= 3 && data.windChill < data.temp },
+    { key: 'dewpt',          label: 'Dew Point',     unit: '&#176;F' },
+    { key: 'humidity',       label: 'Humidity',      unit: '%'  },
+    { key: 'windSpeed',      label: 'Wind Speed',    unit: 'mph' },
+    { key: 'windGust',       label: 'Wind Gust',     unit: 'mph' },
+    { key: 'winddir',        label: 'Wind Dir',      unit: '&#176;'  },
+    { key: 'pressure',       label: 'Pressure',      unit: 'inHg' },
+    { key: 'precipRate',     label: 'Precip Rate',   unit: 'in/hr' },
+    { key: 'precipTotal',    label: 'Precip Today',  unit: 'in' },
+    { key: 'solarRadiation', label: 'Solar Rad.',    unit: 'W/m&#178;' },
+    { key: 'uv',             label: 'UV Index',      unit: ''   },
+  ];
+
+  // Path to the rolling history file the fetch script maintains.
+  const HISTORY_URL = 'data/history.json';
+
+  const grid = document.getElementById('grid');
+  const subtitle = document.getElementById('subtitle');
+  const status = document.getElementById('status');
+  const errorBanner = document.getElementById('error-banner');
+  const refreshBtn = document.getElementById('refresh-btn');
+
+  let historyChart = null;
+  let windChart = null;
+  let windRoseChart = null;
+  let pressureChart = null;
+  let solarChart = null;
+  let isRefreshing = false;
+
+  function renderChart(history) {
+    const labels = history.map(entry => entry.time);
+    const tempData = history.map(entry => entry.temp);
+    const humidityData = history.map(entry => entry.humidity);
+
+    const ctx = document.getElementById('historyChart').getContext('2d');
+
+    if (historyChart) {
+      // Update in place rather than recreating, so the chart doesn't flicker on refresh.
+      historyChart.data.labels = labels;
+      historyChart.data.datasets[0].data = tempData;
+      historyChart.data.datasets[1].data = humidityData;
+      historyChart.update();
+      return;
+    }
+
+    historyChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Temperature (&#176;F)',
+            data: tempData,
+            borderColor: '#4fb0ff',
+            backgroundColor: 'rgba(79, 176, 255, 0.1)',
+            yAxisID: 'yTemp',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Humidity (%)',
+            data: humidityData,
+            borderColor: '#ffb84f',
+            backgroundColor: 'rgba(255, 184, 79, 0.1)',
+            yAxisID: 'yHumidity',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: { color: '#93a1b5', maxTicksLimit: 10, autoSkip: true },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          yTemp: {
+            position: 'left',
+            ticks: { color: '#4fb0ff' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            title: { display: true, text: '&#176;F', color: '#4fb0ff' },
+          },
+          yHumidity: {
+            position: 'right',
+            ticks: { color: '#ffb84f' },
+            grid: { display: false },
+            title: { display: true, text: '%', color: '#ffb84f' },
+            min: 0,
+            max: 100,
+          },
+        },
+        plugins: {
+          legend: { labels: { color: '#eef2f7' } },
+        },
+      },
+    });
+  }
+
+  // Time range options for the historical charts, in hours.
+  const RANGE_OPTIONS = [
+    { hours: 24, label: '24 Hours' },
+    { hours: 48, label: '2 Days' },
+    { hours: 96, label: '4 Days' },
+    { hours: 168, label: '7 Days' },
+    { hours: 240, label: '10 Days' },
+  ];
+
+  let fullHistory = [];       // the complete fetched dataset, unfiltered
+  let currentRangeHours = 168; // default: 7 days, matches your existing default
+
+  function filterHistoryByRange(history, hours) {
+    const cutoff = Date.now() - hours * 60 * 60 * 1000;
+    return history.filter(entry => new Date(entry.time).getTime() >= cutoff);
+  }
+
+  function updateChartTitles(rangeLabel) {
+    const ids = ['historyChart-title', 'windChart-title', 'windRoseChart-title', 'pressureChart-title', 'solarChart-title'];
+    const baseNames = {
+      'historyChart-title': 'Temperature & Humidity',
+      'windChart-title': 'Wind Speed & Gusts',
+      'windRoseChart-title': 'Wind Direction',
+      'pressureChart-title': 'Barometric Pressure',
+      'solarChart-title': 'Solar Illumination',
+    };
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = `${baseNames[id]} &#8212; Last ${rangeLabel}`;
+    });
+  }
+
+  function renderAllCharts() {
+    const filtered = filterHistoryByRange(fullHistory, currentRangeHours);
+    if (filtered.length === 0) return;
+    renderChart(filtered);
+    renderWindChart(filtered);
+    renderWindRose(filtered);
+    renderPressureChart(filtered);
+    renderSolarChart(filtered);
+  }
+
+  function initRangeButtons() {
+    const buttons = document.querySelectorAll('.range-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentRangeHours = parseInt(btn.dataset.hours, 10);
+        buttons.forEach(b => b.classList.toggle('active', b === btn));
+        const match = RANGE_OPTIONS.find(r => r.hours === currentRangeHours);
+        updateChartTitles(match ? match.label : '');
+        renderAllCharts();
+      });
+    });
+  }
+
+  async function loadHistory(forceRefresh = false) {
+    try {
+      const url = forceRefresh ? `${HISTORY_URL}?t=${Date.now()}` : HISTORY_URL;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const history = await res.json();
+
+      if (Array.isArray(history) && history.length > 0) {
+        fullHistory = history;
+        renderAllCharts();
+      }
+    } catch (err) {
+      console.warn('Could not load history data:', err.message);
+    }
+  }
+
+  function renderWindChart(history) {
+    const labels = history.map(entry => entry.time);
+    const speedData = history.map(entry => entry.windSpeed);
+    const gustData = history.map(entry => entry.windGust);
+
+    const ctx = document.getElementById('windChart').getContext('2d');
+
+    if (windChart) {
+      windChart.data.labels = labels;
+      windChart.data.datasets[0].data = speedData;
+      windChart.data.datasets[1].data = gustData;
+      windChart.update();
+      return;
+    }
+
+    windChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Sustained (mph)',
+            data: speedData,
+            borderColor: '#7fe0c0',
+            backgroundColor: 'rgba(127, 224, 192, 0.1)',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Gust (mph)',
+            data: gustData,
+            borderColor: '#ff8f6b',
+            backgroundColor: 'rgba(255, 143, 107, 0.08)',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+            borderDash: [4, 3],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: { color: '#93a1b5', maxTicksLimit: 10, autoSkip: true },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#93a1b5' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            title: { display: true, text: 'mph', color: '#93a1b5' },
+          },
+        },
+        plugins: {
+          legend: { labels: { color: '#eef2f7' } },
+        },
+      },
+    });
+  }
+
+  // Buckets historyv class="chart-card">
       <h2 id="historyChart-title">Temperature &amp; Humidity â€” Last 7 Days</h2>
       <div class="chart-wrap">
         <canvas id="historyChart"></canvas>
