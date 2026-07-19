@@ -460,8 +460,8 @@
   // Add, remove, or reorder entries here to customize the dashboard.
   const FIELDS = [
     { key: 'temp',           label: 'Temperature',   unit: '°F' },
-    { key: 'heatIndex',      label: 'Heat Index',    unit: '°F' },
-    { key: 'windChill',      label: 'Wind Chill',    unit: '°F' },
+    { key: 'heatIndex',      label: 'Heat Index',    unit: '°F' , showIf: data => data.temp >= 80 && data.heatIndex > data.temp },
+    { key: 'windChill',      label: 'Wind Chill',    unit: '°F' , showIf: data => data.temp <= 50 && data.windSpeed >= 3 && data.windChill < data.temp },
     { key: 'dewpt',          label: 'Dew Point',     unit: '°F' },
     { key: 'humidity',       label: 'Humidity',      unit: '%'  },
     { key: 'windSpeed',      label: 'Wind Speed',    unit: 'mph' },
@@ -930,7 +930,7 @@ function refreshOutlookImages() {
   const EXTREME_HEAT_TEMP_F = 90;      // temp (or heat index, if higher) at/above this = extreme heat theme
 
 const THEMES = {
-    sunny:            { bg: '#97a2b5', card: '#f2fdff', accent: '#ffcc4d', muted: '#000000', icon: '☀️' },
+    sunny:            { bg: '#8090a6', card: '#f2fdff', accent: '#ffcc4d', muted: '#000000', icon: '☀️' },
     extremeHeat:      { bg: '#4a1907', card: '#5c2712', accent: '#ff6b35', muted: '#000000', icon: '🔥☀️' },
     extremeHeatNight: { bg: '#2e1005', card: '#3d1a0c', accent: '#ff8659', muted: '#ffcc4d', icon: '🔥🌙' },
     cloudy:           { bg: '#b4cad4', card: '#b4c7d4', accent: '#9fb3c8', muted: '#dcf0f7', icon: '⛅️' },
