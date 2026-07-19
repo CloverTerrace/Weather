@@ -402,9 +402,8 @@
   <button id="refresh-btn">🌪️ Refresh Now</button>
 
   <div id="visitor-counter">
-    <span>🌪️ Visitors:</span>
-    <span class="visitor-count" id="visitor-count">…</span>
-  </div>
+  <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fcloverterrace.github.io%2Fweather%2F&label=Visitors&icon=cloud-fill&color=%234fb0ff" alt="Visitor count">
+</div>
 
 <script>
   // Path to the JSON file the GitHub Action keeps updated.
@@ -915,26 +914,6 @@ const THEMES = {
   
   // Attach click handler to refresh button
   refreshBtn.addEventListener('click', handleRefreshClick); initOutlookCarousel();
-
-// ---------- Visitor counter (hitscounter.dev, free, no signup) ----------
-// The url param below must exactly match this page's live URL, URL-encoded.
-const HITSCOUNTER_URL = 'https://cloverterrace.github.io/weather/';
-
-async function initVisitorCounter() {
-  const el = document.getElementById('visitor-count');
-  try {
-    const res = await fetch(
-      `https://hitscounter.dev/api/hit?url=${encodeURIComponent(HITSCOUNTER_URL)}&label=Visitors&icon=cloud-fill&color=%234fb0ff&json=true`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    el.textContent = data.message;
-  } catch (err) {
-    el.textContent = '—';
-    console.warn('Visitor counter unavailable:', err.message);
-  }
-}
 
   // Runs once per page load — intentionally NOT tied to the refresh
   // intervals above, so revisits/auto-refreshes don't inflate the count.
