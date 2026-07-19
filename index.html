@@ -396,33 +396,48 @@
 </div>
   
 <details class="charts-dropdown">
-    <summary>📊 Historical Data</summary>
+    <summary>Historical Data</summary>
+
+    <div class="range-buttons">
+      <button class="range-btn" data-hours="24">24 Hours</button>
+      <button class="range-btn" data-hours="48">2 Days</button>
+      <button class="range-btn" data-hours="96">4 Days</button>
+      <button class="range-btn active" data-hours="168">7 Days</button>
+      <button class="range-btn" data-hours="240">10 Days</button>
+    </div>
 
     <div class="chart-card">
-      <h2>Temperature &amp; Humidity — Last 7 Days</h2>
+      <h2 id="historyChart-title">Temperature &amp; Humidity — Last 7 Days</h2>
       <div class="chart-wrap">
         <canvas id="historyChart"></canvas>
       </div>
     </div>
 
     <div class="chart-card">
-      <h2>Wind Speed &amp; Gusts — Last 7 Days</h2>
+      <h2 id="windChart-title">Wind Speed &amp; Gusts — Last 7 Days</h2>
       <div class="chart-wrap">
         <canvas id="windChart"></canvas>
       </div>
     </div>
 
     <div class="chart-card">
-      <h2>Wind Direction — Last 7 Days</h2>
+      <h2 id="windRoseChart-title">Wind Direction — Last 7 Days</h2>
       <div class="chart-wrap">
         <canvas id="windRoseChart"></canvas>
       </div>
     </div>
 
     <div class="chart-card">
-      <h2>Barometric Pressure — Last 7 Days</h2>
+      <h2 id="pressureChart-title">Barometric Pressure — Last 7 Days</h2>
       <div class="chart-wrap">
         <canvas id="pressureChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2 id="solarChart-title">Solar Illumination — Last 7 Days</h2>
+      <div class="chart-wrap">
+        <canvas id="solarChart"></canvas>
       </div>
     </div>
   </details>
