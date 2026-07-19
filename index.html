@@ -487,6 +487,8 @@
   let windChart = null;
   let windRoseChart = null;
   let pressureChart = null;
+  let pressureChart = null;
+  let solarChart = null;
   let isRefreshing = false;
 
   function renderChart(history) {
@@ -759,6 +761,58 @@
     });
   }
 
+  function renderSolarChart(history) {
+    const labels = history.map(entry => entry.time);
+    const solarData = history.map(entry => entry.solarRadiation);
+
+    const ctx = document.getElementById('solarChart').getContext('2d');
+
+    if (solarChart) {
+      solarChart.data.labels = labels;
+      solarChart.data.datasets[0].data = solarData;
+      solarChart.update();
+      return;
+    }
+
+    solarChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Solar Radiation (W/m²)',
+            data: solarData,
+            borderColor: '#ffcc4d',
+            backgroundColor: 'rgba(255, 204, 77, 0.15)',
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            ticks: { color: '#93a1b5', maxTicksLimit: 10, autoSkip: true },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#93a1b5' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            title: { display: true, text: 'W/m²', color: '#93a1b5' },
+          },
+        },
+        plugins: {
+          legend: { labels: { color: '#eef2f7' } },
+        },
+      },
+    });
+  }
 
   async function loadForecast(forceRefresh = false) {
     const container = document.getElementById('forecast-periods');
