@@ -487,7 +487,6 @@
   let windChart = null;
   let windRoseChart = null;
   let pressureChart = null;
-  let pressureChart = null;
   let solarChart = null;
   let isRefreshing = false;
 
@@ -583,7 +582,58 @@
   }
 
   function updateChartTitles(rangeLabel) {
-    const ids =
+    const ids = ['historyChart-title', 'windChart-title', 'windRoseChart-title', 'pressureChart-title', 'solarChart-title'];
+    const baseNames = {
+      'historyChart-title': 'Temperature & Humidity',
+      'windChart-title': 'Wind Speed & Gusts',
+      'windRoseChart-title': 'Wind Direction',
+      'pressureChart-title': 'Barometric Pressure',
+      'solarChart-title': 'Solar Illumination',
+    };
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = `${baseNames[id]} — Last ${rangeLabel}`;
+    });
+  }
+
+  function renderAllCharts() {
+    const filtered = filterHistoryByRange(fullHistory, currentRangeHours);
+    if (filtered.length === 0) return;
+    renderChart(filtered);
+    renderWindChart(filtered);
+    renderWindRose(filtered);
+    renderPressureChart(filtered);
+    renderSolarChart(filtered);
+  }
+
+  function initRangeButtons() {
+    const buttons = document.querySelectorAll('.range-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentRangeHours = parseInt(btn.dataset.hours, 10);
+        buttons.forEach(b => b.classList.toggle('active', b === btn));
+        const match = RANGE_OPTIONS.find(r => r.hours === currentRangeHours);
+        updateChartTitles(match ? match.label : '');
+        renderAllCharts();
+      });
+    });
+  }
+
+  async function loadHistory(forceRefresh = false) {
+    try {
+      const url = forceRefresh ? `${HISTORY_URL}?t=${Date.now()}` : HISTORY_URL;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const history = await res.json();
+
+      if (Array.isArray(history) && history.length > 0) {
+        fullHistory = history;
+        renderAllCharts();
+      }
+    } catch (err) {
+      console.warn('Could not load history data:', err.message);
+    }
+  }
 
   function renderWindChart(history) {
     const labels = history.map(entry => entry.time);
@@ -1015,11 +1065,7 @@ const THEMES = {
   });
   
   // Attach click handler to refresh button
-  refreshBtn.addEventListener('click', handleRefreshClick); initOutlookCarousel();
-
-  // Runs once per page load — intentionally NOT tied to the refresh
-  // intervals above, so revisits/auto-refreshes don't inflate the count.
-  initVisitorCounter();
+  refreshBtn.addEventListener('click', handleRefreshClick);
 
   // Register the service worker (enables installability + the app shell
   // caching described in sw.js). Safe to no-op in browsers that don't
