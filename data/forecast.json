@@ -1,12 +1,12 @@
 [
   {
-    "name": "Today",
+    "name": "This Afternoon",
     "temperature": 80,
     "temperatureUnit": "F",
     "windSpeed": "6 mph",
     "windDirection": "N",
-    "shortForecast": "Mostly Sunny",
-    "detailedForecast": "Mostly sunny, with a high near 80. North wind around 6 mph.",
+    "shortForecast": "Sunny",
+    "detailedForecast": "Sunny, with a high near 80. North wind around 6 mph.",
     "isDaytime": true
   },
   {
@@ -21,12 +21,12 @@
   },
   {
     "name": "Monday",
-    "temperature": 83,
+    "temperature": 82,
     "temperatureUnit": "F",
     "windSpeed": "2 mph",
-    "windDirection": "SE",
+    "windDirection": "SW",
     "shortForecast": "Sunny",
-    "detailedForecast": "Sunny, with a high near 83. Southeast wind around 2 mph.",
+    "detailedForecast": "Sunny, with a high near 82. Southwest wind around 2 mph.",
     "isDaytime": true
   },
   {
