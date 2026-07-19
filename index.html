@@ -344,9 +344,24 @@
   </div>
 
   <div class="camera-card outlook-card">
-    <h2>SPC Day 1 Convective Outlook</h2>
-    <img id="outlook-img" src="data/outlook.png" alt="NOAA Storm Prediction Center Day 1 Convective Outlook">
-    <div class="outlook-note">Live image from NOAA's Storm Prediction Center — updates automatically as SPC issues new outlooks.</div>
+    <h2>SPC Convective Outlook</h2>
+    <div class="outlook-tabs">
+      <button class="outlook-tab active" data-target="outlook-slide-day1">Day 1</button>
+      <button class="outlook-tab" data-target="outlook-slide-day2">Day 2</button>
+      <button class="outlook-tab" data-target="outlook-slide-day3">Day 3</button>
+    </div>
+    <div class="outlook-scroll" id="outlook-scroll">
+      <div class="outlook-slide" id="outlook-slide-day1">
+        <img id="outlook-img-day1" src="data/outlook-day1.png" alt="SPC Day 1 Convective Outlook">
+      </div>
+      <div class="outlook-slide" id="outlook-slide-day2">
+        <img id="outlook-img-day2" src="data/outlook-day2.png" alt="SPC Day 2 Convective Outlook">
+      </div>
+      <div class="outlook-slide" id="outlook-slide-day3">
+        <img id="outlook-img-day3" src="data/outlook-day3.png" alt="SPC Day 3 Convective Outlook">
+      </div>
+    </div>
+    <div class="outlook-note">Live images from NOAA's Storm Prediction Center. Swipe or tap the tabs above to switch days.</div>
   </div>
   
 <details class="charts-dropdown">
