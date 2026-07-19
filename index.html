@@ -264,6 +264,30 @@
     color: var(--bg-color);
   }
 
+.range-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .range-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    color: var(--muted-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .range-btn.active {
+    background: var(--accent-color);
+    color: var(--bg-color);
+  }
+  
   .outlook-scroll {
     display: flex;
     overflow-x: auto;
