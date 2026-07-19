@@ -241,7 +241,47 @@
     font-size: 0.85rem;
   }
 
-  .outlook-card img {
+  .outlook-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .outlook-tab {
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    color: var(--muted-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .outlook-tab.active {
+    background: var(--accent-color);
+    color: var(--bg-color);
+  }
+
+  .outlook-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    scrollbar-width: none;
+  }
+
+  .outlook-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .outlook-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    text-align: center;
+  }
+
+  .outlook-slide img {
     max-width: 100%;
     border-radius: 8px;
     display: block;
