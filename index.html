@@ -124,6 +124,13 @@
     margin-top: 1.5rem;
   }
 
+  .charts-dropdown-body {
+  background: var(--card-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  }
+
   .charts-dropdown summary {
     background: var(--card-color);
     border-radius: 12px;
@@ -375,7 +382,7 @@
   </div>
 
 <div class="camera-card">
-    <h2>Local Forecast (15001)</h2>
+    <h2>Today's Forecast</h2>
     <div class="forecast-periods" id="forecast-periods">
       <!-- Forecast period cards are injected by JS below -->
     </div>
@@ -399,7 +406,7 @@
         <img id="outlook-img-day3" src="data/outlook-day3.png" alt="SPC Day 3 Convective Outlook">
       </div>
     </div>
-    <div class="outlook-note">Live images from NOAA's Storm Prediction Center.</div>
+    <div class="outlook-note">Updated hourly or when a new outlook is issued by NOAA's Storm Prediction Center.</div>
   </div>
 
 <div class="chart-card">
@@ -410,7 +417,7 @@
   
 <details class="charts-dropdown">
     <summary>Historical Data</summary>
-
+  <div class="charts-dropdown-body">
     <div class="range-buttons">
       <button class="range-btn" data-hours="24">24 Hours</button>
       <button class="range-btn" data-hours="48">2 Days</button>
@@ -453,6 +460,7 @@
         <canvas id="solarChart"></canvas>
       </div>
     </div>
+  </div>
   </details>
 
   <div id="status"></div>
