@@ -1,6 +1,6 @@
 # Clover Terrace Weather Dashboard, created by Alyssa Rozsa 🍀
 
-A live weather page for Clover Terrace, a higher elevation micro-climate within Aliquippa. Frequently updated throughout the day to provide current conditions from an Ecowitt station via the Weather Underground API.
+A live weather page for Clover Terrace, a small, higher elevation micro-climate within Aliquippa, a historic city along the Ohio River. Frequently updated throughout the day to provide current conditions from an Ecowitt station via the Weather Underground API.
 
 ## how it works 🌪️
 
