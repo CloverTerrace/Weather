@@ -35,8 +35,8 @@
     "temperatureUnit": "F",
     "windSpeed": "6 to 12 mph",
     "windDirection": "NW",
-    "shortForecast": "Partly Sunny",
-    "detailedForecast": "Partly sunny, with a high near 75. Northwest wind 6 to 12 mph.",
+    "shortForecast": "Mostly Sunny",
+    "detailedForecast": "Mostly sunny, with a high near 75. Northwest wind 6 to 12 mph.",
     "isDaytime": true
   }
 ]
