@@ -3,10 +3,10 @@
     "name": "Today",
     "temperature": 81,
     "temperatureUnit": "F",
-    "windSpeed": "6 to 14 mph",
+    "windSpeed": "7 to 14 mph",
     "windDirection": "SW",
     "shortForecast": "Slight Chance Showers And Thunderstorms then Showers And Thunderstorms Likely",
-    "detailedForecast": "A slight chance of showers and thunderstorms between 9am and 10am, then showers and thunderstorms likely. Some of the storms could be severe. Mostly cloudy, with a high near 81. Southwest wind 6 to 14 mph, with gusts as high as 26 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible.",
+    "detailedForecast": "A slight chance of showers and thunderstorms between 9am and 10am, then showers and thunderstorms likely. Some of the storms could be severe. Mostly cloudy, with a high near 81. Southwest wind 7 to 14 mph, with gusts as high as 26 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible.",
     "isDaytime": true
   },
   {
