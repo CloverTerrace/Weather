@@ -335,6 +335,11 @@
     pointer-events: none;
     overflow: hidden;
     z-index: 9999;
+    /* Fades the whole effect out by roughly the top third of the screen,
+       so drifting clouds/rain stay atmospheric and never sit over your
+       cards or text further down. */
+    mask-image: linear-gradient(to bottom, black 0%, black 20%, transparent 55%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 20%, transparent 55%);
   }
 
   .fx-rain, .fx-clouds {
@@ -367,15 +372,19 @@
     to { transform: translateY(120vh) rotate(12deg); }
   }
 
-  .cloud-shape {
+.cloud-shape {
     position: absolute;
     top: 5%;
-    width: 160px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 50px;
-    filter: blur(6px);
+    width: 200px;
+    height: 70px;
     animation: fx-drift linear infinite;
+  }
+
+  .cloud-puff {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    filter: blur(4px);
   }
 
   @keyframes fx-drift {
