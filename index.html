@@ -995,6 +995,33 @@ function refreshOutlookImages() {
       tabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
     });
   }
+  
+
+  function initWeatherFx() {
+    const rainContainer = document.getElementById('fx-rain');
+    const cloudContainer = document.getElementById('fx-clouds');
+
+    const DROP_COUNT = 28;
+    for (let i = 0; i < DROP_COUNT; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.left = `${Math.random() * 100}%`;
+      drop.style.animationDuration = `${0.6 + Math.random() * 0.6}s`;
+      drop.style.animationDelay = `${Math.random() * 2}s`;
+      rainContainer.appendChild(drop);
+    }
+
+    const CLOUD_COUNT = 4;
+    for (let i = 0; i < CLOUD_COUNT; i++) {
+      const cloud = document.createElement('div');
+      cloud.className = 'cloud-shape';
+      cloud.style.top = `${5 + Math.random() * 20}%`;
+      cloud.style.animationDuration = `${70 + Math.random() * 40}s`;
+      cloud.style.animationDelay = `${Math.random() * -60}s`;
+      cloudContainer.appendChild(cloud);
+    }
+  }
+
 
   
   // ---------- Weather-based color/icon themes ----------
@@ -1060,6 +1087,12 @@ const THEMES = {
     root.setProperty('--accent-color', theme.accent);
     root.setProperty('--muted-color', theme.muted);
     document.getElementById('weather-icon').textContent = theme.icon;
+
+    // Toggle the CSS rain/cloud effects based on the active theme.
+    const rainThemes = ['rainy', 'rainyNight', 'thunderstorm', 'thunderstormNight'];
+    document.body.classList.toggle('fx-active-rain', rainThemes.includes(themeKey));
+    document.body.classList.toggle('fx-active-cloudy', themeKey === 'cloudy');
+  
   }
 
 function shouldShowField(field, data) {
@@ -1196,7 +1229,9 @@ function shouldShowField(field, data) {
   setInterval(refreshOutlookImages, 30 * 60 * 1000);
   initOutlookCarousel();
   initRangeButtons();
+  initWeatherFx();
 
+  
 // Chart.js sizes canvases based on the container's dimensions at creation
   // time — since these charts start out inside a collapsed <details>, they
   // need an explicit resize() once the dropdown actually opens.
