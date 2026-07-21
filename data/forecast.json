@@ -1,15 +1,5 @@
 [
   {
-    "name": "This Afternoon",
-    "temperature": 81,
-    "temperatureUnit": "F",
-    "windSpeed": "12 mph",
-    "windDirection": "SW",
-    "shortForecast": "Showers And Thunderstorms Likely",
-    "detailedForecast": "Showers and thunderstorms likely. Some of the storms could be severe. Mostly cloudy, with a high near 81. Southwest wind around 12 mph, with gusts as high as 24 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible.",
-    "isDaytime": true
-  },
-  {
     "name": "Tonight",
     "temperature": 62,
     "temperatureUnit": "F",
@@ -38,5 +28,15 @@
     "shortForecast": "Partly Cloudy",
     "detailedForecast": "Partly cloudy, with a low around 52. North wind 0 to 8 mph.",
     "isDaytime": false
+  },
+  {
+    "name": "Thursday",
+    "temperature": 77,
+    "temperatureUnit": "F",
+    "windSpeed": "0 to 5 mph",
+    "windDirection": "N",
+    "shortForecast": "Sunny",
+    "detailedForecast": "Sunny, with a high near 77. North wind 0 to 5 mph.",
+    "isDaytime": true
   }
 ]
