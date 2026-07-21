@@ -1024,9 +1024,31 @@ function refreshOutlookImages() {
     for (let i = 0; i < CLOUD_COUNT; i++) {
       const cloud = document.createElement('div');
       cloud.className = 'cloud-shape';
-      cloud.style.top = `${5 + Math.random() * 20}%`;
+      cloud.style.top = `${2 + Math.random() * 15}%`;
       cloud.style.animationDuration = `${70 + Math.random() * 40}s`;
       cloud.style.animationDelay = `${Math.random() * -60}s`;
+
+      // Give each cloud its own overall size and "depth" (fainter = further away).
+      const scale = 0.7 + Math.random() * 0.8;
+      const depthOpacity = 0.3 + Math.random() * 0.4;
+      cloud.style.transform = `scale(${scale})`;
+      cloud.style.opacity = depthOpacity;
+
+      // Build a fluffy silhouette from several overlapping, randomized puffs
+      // instead of one uniform blob, so no two clouds look identical.
+      const puffCount = 4 + Math.floor(Math.random() * 3); // 4-6 puffs
+      for (let p = 0; p < puffCount; p++) {
+        const puff = document.createElement('div');
+        puff.className = 'cloud-puff';
+        const size = 40 + Math.random() * 60;
+        puff.style.width = `${size}px`;
+        puff.style.height = `${size * (0.6 + Math.random() * 0.3)}px`;
+        puff.style.left = `${(p / puffCount) * 160 + Math.random() * 20}px`;
+        puff.style.top = `${Math.random() * 25}px`;
+        puff.style.opacity = 0.5 + Math.random() * 0.4;
+        cloud.appendChild(puff);
+      }
+
       cloudContainer.appendChild(cloud);
     }
   }
