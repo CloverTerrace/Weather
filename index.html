@@ -1043,20 +1043,76 @@ function shouldShowField(field, data) {
       errorBanner.textContent = `Couldn't load weather data: ${err.message}`;
       errorBanner.style.display = 'block';
       status.textContent = `Last check attempt: ${new Date().toLocaleTimeString()}`;
-    } finally {
-      isRefreshing = false;
-      refreshBtn.disabled = false;
     }
   }
 
+  // ---------- Manual "Refresh Now" trigger with a 10-minute cooldown ----------
+  // IMPORTANT: replace this with your actual Cloudflare Worker URL.
+  const WORKER_URL = 'https://weather-refresh-trigger.YOUR-SUBDOMAIN.workers.dev';
+  const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
+  const COOLDOWN_STORAGE_KEY = 'weatherRefreshCooldownUntil';
+  const REFRESH_BTN_DEFAULT_LABEL = '🌪️ Refresh Now';
+
+  function getRemainingCooldownMs() {
+    const until = parseInt(localStorage.getItem(COOLDOWN_STORAGE_KEY) || '0', 10);
+    return Math.max(0, until - Date.now());
+  }
+
+  function startCooldownCountdown() {
+    function tick() {
+      const remaining = getRemainingCooldownMs();
+      if (remaining <= 0) {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = REFRESH_BTN_DEFAULT_LABEL;
+        return;
+      }
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = `⏳ Wait ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
   async function handleRefreshClick() {
-    if (isRefreshing) return;
+    if (isRefreshing || getRemainingCooldownMs() > 0) return;
+
     isRefreshing = true;
     refreshBtn.disabled = true;
+    refreshBtn.textContent = '🔄 Triggering update...';
+
+    // Refresh whatever's already in the data files right now (cache-busted),
+    // regardless of whether triggering a brand-new run succeeds below.
     await loadData(true);
     await loadHistory(true);
     await loadForecast(true);
     refreshOutlookImages();
+
+    try {
+      const res = await fetch(WORKER_URL, { method: 'POST' });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        status.textContent = 'Update triggered! New data should appear within a minute or two.';
+      } else {
+        status.textContent = `Couldn't trigger a new update (${result.error || 'unknown error'}). Showing latest available data instead.`;
+      }
+    } catch (err) {
+      status.textContent = "Couldn't reach the update trigger — showing latest available data instead.";
+      console.warn('Manual trigger failed:', err);
+    }
+
+    // Start the cooldown regardless of success/failure, so repeated quick
+    // retries can't hammer the trigger endpoint.
+    localStorage.setItem(COOLDOWN_STORAGE_KEY, (Date.now() + REFRESH_COOLDOWN_MS).toString());
+    isRefreshing = false;
+    startCooldownCountdown();
+  }
+
+  // If a cooldown from a previous click is still active on page load
+  // (e.g. after a refresh), reflect that immediately in the button.
+  if (getRemainingCooldownMs() > 0) {
+    startCooldownCountdown();
   }
 
   loadData();
