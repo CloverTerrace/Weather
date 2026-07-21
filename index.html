@@ -334,72 +334,12 @@
     inset: 0;
     pointer-events: none;
     overflow: hidden;
-    z-index: 9999;
-    /* Fades the whole effect out by roughly the top third of the screen,
-       so drifting clouds/rain stay atmospheric and never sit over your
-       cards or text further down. */
-    mask-image: linear-gradient(to bottom, black 0%, black 20%, transparent 55%);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 20%, transparent 55%);
+    z-index: 0;
   }
 
-  .fx-rain, .fx-clouds {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-  }
-
-  body.fx-active-rain .fx-rain {
-    opacity: 1;
-  }
-
-  body.fx-active-cloudy .fx-clouds {
-    opacity: 1;
-  }
-
-  .raindrop {
-    position: absolute;
-    top: -10vh;
-    width: 2px;
-    height: 18px;
-    background: linear-gradient(to bottom, rgba(180, 220, 255, 0), rgba(180, 220, 255, 0.6));
-    transform: rotate(12deg);
-    animation: fx-fall linear infinite;
-  }
-
-  @keyframes fx-fall {
-    from { transform: translateY(0) rotate(12deg); }
-    to { transform: translateY(120vh) rotate(12deg); }
-  }
-
-.cloud-shape {
-    position: absolute;
-    top: 5%;
-    width: 200px;
-    height: 70px;
-    animation: fx-drift linear infinite;
-  }
-
-  .cloud-puff {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    filter: blur(4px);
-  }
-
-  @keyframes fx-drift {
-    from { transform: translateX(-20vw); }
-    to { transform: translateX(120vw); }
-  }
-
-  /* Respects visitors who've asked their device to reduce motion. */
-  @media (prefers-reduced-motion: reduce) {
-    .raindrop, .cloud-shape {
-      animation: none !important;
-    }
-    #weather-fx {
-      display: none !important;
-    }
+  #page-content {
+    position: relative;
+    z-index: 1;
   }
   
   #refresh-btn {
@@ -428,10 +368,12 @@
 </head>
 <body>
 
-  <div id="weather-fx" aria-hidden="true">
+    <div id="weather-fx" aria-hidden="true">
     <div class="fx-rain" id="fx-rain"></div>
     <div class="fx-clouds" id="fx-clouds"></div>
   </div>
+
+  <div id="page-content">
 
   <h1><span id="weather-icon">🍀</span> Clover Terrace Weather Station</h1>
   <div id="subtitle">Loading...</div>
@@ -539,6 +481,8 @@
   <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fcloverterrace.github.io%2Fweather%2F&label=Visitors&icon=cloud-lightning-rain-fill&color=%23e9ecef&message=&style=flat&tz=UTC" alt="Visitor Count">
 </div>
 
+  </div>
+    
 <script>
   // Path to the JSON file the GitHub Action keeps updated.
   const DATA_URL = 'data/weather.json';
@@ -1024,7 +968,7 @@ function refreshOutlookImages() {
     for (let i = 0; i < CLOUD_COUNT; i++) {
       const cloud = document.createElement('div');
       cloud.className = 'cloud-shape';
-      cloud.style.top = `${2 + Math.random() * 15}%`;
+      cloud.style.top = `${Math.random() * 50}%`;
       cloud.style.animationDuration = `${70 + Math.random() * 40}s`;
       cloud.style.animationDelay = `${Math.random() * -60}s`;
 
