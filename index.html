@@ -1231,8 +1231,13 @@ function shouldShowField(field, data) {
   }
 
   // ---------- Manual "Refresh Now" trigger with a 10-minute cooldown ----------
-  // IMPORTANT: replace this with your actual Cloudflare Worker URL.
-  const WORKER_URL = 'https://weather-refresh-trigger.cloverwx4.workers.dev/';
+// Tries each trigger endpoint in order — if one is blocked or down,
+// the next one picks up the slack.
+const TRIGGER_ENDPOINTS = [
+  'https://weather-refresh-trigger.cloverwx4.workers.dev/',
+  'https://weather-refresh-trigger.cloverwx.deno.net/',
+];
+const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
   const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
   const COOLDOWN_STORAGE_KEY = 'weatherRefreshCooldownUntil';
   const REFRESH_BTN_DEFAULT_LABEL = '🌪️ Refresh Now';
@@ -1259,6 +1264,21 @@ function shouldShowField(field, data) {
     tick();
   }
 
+  async function triggerWorkflow() {
+  for (const url of TRIGGER_ENDPOINTS) {
+    try {
+      const res = await fetch(url, { method: 'POST' });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        return true;
+      }
+    } catch (err) {
+      console.warn(`Trigger failed via ${url}, trying next...`, err);
+    }
+  }
+  return false;
+  }
+
   async function handleRefreshClick() {
     if (isRefreshing || getRemainingCooldownMs() > 0) return;
 
@@ -1273,18 +1293,12 @@ function shouldShowField(field, data) {
     await loadForecast(true);
     refreshOutlookImages();
 
-    try {
-      const res = await fetch(WORKER_URL, { method: 'POST' });
-      const result = await res.json();
-      if (res.ok && result.success) {
-        status.textContent = 'Update triggered! New data should appear within a minute or two.';
-      } else {
-        status.textContent = `Couldn't trigger a new update (${result.error || 'unknown error'}). Showing latest available data instead.`;
-      }
-    } catch (err) {
-      status.textContent = "Couldn't reach the update trigger — showing latest available data instead.";
-      console.warn('Manual trigger failed:', err);
-    }
+    const triggered = await triggerWorkflow();
+if (triggered) {
+  status.textContent = 'Update triggered! New data should appear within a minute or two.';
+} else {
+  status.textContent = "Couldn't reach the update trigger — showing latest available data instead.";
+}
 
     // Start the cooldown regardless of success/failure, so repeated quick
     // retries can't hammer the trigger endpoint.
