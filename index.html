@@ -353,6 +353,17 @@
     transition: opacity 0.8s ease;
   }
 
+  .fx-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+body.fx-active-stars .fx-stars {
+  opacity: 1;
+}
+
   body.fx-active-rain .fx-rain {
     opacity: 1;
   }
@@ -384,6 +395,18 @@
     animation: fx-drift linear infinite;
   }
 
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: fx-twinkle ease-in-out infinite;
+}
+
+@keyframes fx-twinkle {
+  0%, 100% { opacity: var(--star-min-opacity, 0.2); transform: scale(0.85); }
+  50%      { opacity: var(--star-max-opacity, 0.9); transform: scale(1.1); }
+}
+  
   .cloud-puff {
     position: absolute;
     border-radius: 84%;
@@ -398,7 +421,7 @@
 
   /* Respects visitors who've asked their device to reduce motion. */
   @media (prefers-reduced-motion: reduce) {
-    .raindrop, .cloud-shape {
+    .raindrop, .cloud-shape, .star {
       animation: none !important;
     }
     #weather-fx {
@@ -435,6 +458,7 @@
     <div id="weather-fx" aria-hidden="true">
     <div class="fx-rain" id="fx-rain"></div>
     <div class="fx-clouds" id="fx-clouds"></div>
+    <div class="fx-stars" id="fx-stars"></div>
   </div>
 
   <div id="page-content">
@@ -1059,6 +1083,25 @@ function refreshOutlookImages() {
 
       cloudContainer.appendChild(cloud);
     }
+
+      const starContainer = document.getElementById('fx-stars');
+const STAR_COUNT = 60;
+for (let i = 0; i < STAR_COUNT; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  const size = 1 + Math.random() * 1.8; // small — 1-2.8px
+  star.style.width = `${size}px`;
+  star.style.height = `${size}px`;
+  star.style.left = `${Math.random() * 100}%`;
+  star.style.top = `${Math.random() * 70}%`; // keep clear of the horizon area
+  // Slow, staggered twinkle — each star drifts at its own gentle pace.
+  star.style.animationDuration = `${3 + Math.random() * 5}s`;
+  star.style.animationDelay = `${Math.random() * -8}s`;
+  star.style.setProperty('--star-min-opacity', (0.1 + Math.random() * 0.2).toFixed(2));
+  star.style.setProperty('--star-max-opacity', (0.6 + Math.random() * 0.4).toFixed(2));
+  starContainer.appendChild(star);
+}
+    
   }
 
 
@@ -1131,7 +1174,7 @@ const THEMES = {
     const rainThemes = ['rainy', 'rainyNight', 'thunderstorm', 'thunderstormNight'];
     document.body.classList.toggle('fx-active-rain', rainThemes.includes(themeKey));
     document.body.classList.toggle('fx-active-cloudy', themeKey === 'cloudy');
-  
+    document.body.classList.toggle('fx-active-stars', themeKey === 'night');
   }
 
 function shouldShowField(field, data) {
