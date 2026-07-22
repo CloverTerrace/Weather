@@ -3,10 +3,10 @@
     "name": "Tonight",
     "temperature": 62,
     "temperatureUnit": "F",
-    "windSpeed": "7 mph",
+    "windSpeed": "6 mph",
     "windDirection": "W",
-    "shortForecast": "Chance Showers And Thunderstorms",
-    "detailedForecast": "A chance of showers and thunderstorms before 10pm, then showers and thunderstorms likely between 10pm and midnight, then a slight chance of showers and thunderstorms between midnight and 1am. Mostly cloudy, with a low around 62. West wind around 7 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible.",
+    "shortForecast": "Showers And Thunderstorms Likely then Slight Chance Showers And Thunderstorms",
+    "detailedForecast": "Showers and thunderstorms likely before midnight, then a slight chance of showers and thunderstorms between midnight and 1am. Mostly cloudy, with a low around 62. West wind around 6 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible.",
     "isDaytime": false
   },
   {
