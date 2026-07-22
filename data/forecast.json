@@ -3,10 +3,10 @@
     "name": "Tonight",
     "temperature": 52,
     "temperatureUnit": "F",
-    "windSpeed": "0 to 8 mph",
+    "windSpeed": "0 to 7 mph",
     "windDirection": "N",
     "shortForecast": "Mostly Clear then Areas Of Fog",
-    "detailedForecast": "Areas of fog after 3am. Mostly clear, with a low around 52. North wind 0 to 8 mph.",
+    "detailedForecast": "Areas of fog after 3am. Mostly clear, with a low around 52. North wind 0 to 7 mph.",
     "isDaytime": false
   },
   {
