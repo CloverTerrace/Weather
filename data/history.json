@@ -1773,5 +1773,15 @@
     "winddir": 251,
     "pressure": 27.83,
     "solarRadiation": 2.1
+  },
+  {
+    "time": "2026-07-21 21:17:04",
+    "temp": 72,
+    "humidity": 92,
+    "windSpeed": 2,
+    "windGust": 6,
+    "winddir": 291,
+    "pressure": 27.84,
+    "solarRadiation": 0.0
   }
 ]
