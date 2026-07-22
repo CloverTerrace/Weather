@@ -14,9 +14,9 @@
     "temperature": 52,
     "temperatureUnit": "F",
     "windSpeed": "0 to 8 mph",
-    "windDirection": "NW",
-    "shortForecast": "Mostly Clear",
-    "detailedForecast": "Mostly clear, with a low around 52. Northwest wind 0 to 8 mph.",
+    "windDirection": "N",
+    "shortForecast": "Mostly Clear then Areas Of Fog",
+    "detailedForecast": "Areas of fog after 3am. Mostly clear, with a low around 52. North wind 0 to 8 mph.",
     "isDaytime": false
   },
   {
@@ -25,18 +25,18 @@
     "temperatureUnit": "F",
     "windSpeed": "0 to 3 mph",
     "windDirection": "NE",
-    "shortForecast": "Sunny",
-    "detailedForecast": "Sunny, with a high near 77. Northeast wind 0 to 3 mph.",
+    "shortForecast": "Areas Of Fog then Sunny",
+    "detailedForecast": "Areas of fog before 8am. Sunny, with a high near 77. Northeast wind 0 to 3 mph.",
     "isDaytime": true
   },
   {
     "name": "Thursday Night",
-    "temperature": 56,
+    "temperature": 54,
     "temperatureUnit": "F",
     "windSpeed": "3 mph",
     "windDirection": "NE",
     "shortForecast": "Mostly Clear",
-    "detailedForecast": "Mostly clear, with a low around 56. Northeast wind around 3 mph.",
+    "detailedForecast": "Mostly clear, with a low around 54. Northeast wind around 3 mph.",
     "isDaytime": false
   }
 ]
