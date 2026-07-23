@@ -528,13 +528,6 @@ body.fx-active-stars .fx-stars {
     </div>
     <div class="sunmoon-details" id="sunmoon-details"></div>
   </div>
-
-  <div class="camera-card aqi-card">
-    <h2>Air Quality</h2>
-    <div class="aqi-value" id="aqi-value">--</div>
-    <div class="aqi-category" id="aqi-category">Loading...</div>
-    <div class="aqi-details" id="aqi-details"></div>
-  </div>
     
 <div class="camera-card">
     <h2>Today's Forecast</h2>
@@ -1427,7 +1420,6 @@ const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
     await loadData(true);
     await loadHistory(true);
     await loadForecast(true);
-    await loadAQI(true);
     refreshOutlookImages();
 
     const triggered = await triggerWorkflow();
@@ -1464,8 +1456,7 @@ if (triggered) {
   initRangeButtons();
   initWeatherFx();
   initSunMoonTracker();
-  loadAQI();
-  setInterval(loadAQI, 15 * 60 * 1000); // AQI doesn't change minute-to-minute
+  
 
   
 // Chart.js sizes canvases based on the container's dimensions at creation
