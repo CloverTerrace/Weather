@@ -3,10 +3,10 @@
     "name": "Tonight",
     "temperature": 52,
     "temperatureUnit": "F",
-    "windSpeed": "0 to 5 mph",
+    "windSpeed": "1 mph",
     "windDirection": "N",
-    "shortForecast": "Mostly Clear then Areas Of Fog",
-    "detailedForecast": "Areas of fog after 3am. Mostly clear, with a low around 52. North wind 0 to 5 mph.",
+    "shortForecast": "Mostly Clear then Patchy Fog",
+    "detailedForecast": "Patchy fog after 4am. Mostly clear, with a low around 52. North wind around 1 mph.",
     "isDaytime": false
   },
   {
@@ -15,8 +15,8 @@
     "temperatureUnit": "F",
     "windSpeed": "0 to 3 mph",
     "windDirection": "NE",
-    "shortForecast": "Areas Of Fog then Sunny",
-    "detailedForecast": "Areas of fog before 8am. Sunny, with a high near 77. Northeast wind 0 to 3 mph.",
+    "shortForecast": "Patchy Fog then Sunny",
+    "detailedForecast": "Patchy fog before 8am. Sunny, with a high near 77. Northeast wind 0 to 3 mph.",
     "isDaytime": true
   },
   {
