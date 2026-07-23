@@ -428,6 +428,66 @@ body.fx-active-stars .fx-stars {
       display: none !important;
     }
   }
+
+  .sky-box {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(to bottom, #1a2b4a, #4a6fa5 60%, #87ceeb 100%);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .sky-body {
+    position: absolute;
+    font-size: 1.6rem;
+    transform: translate(-50%, -50%);
+    transition: left 1s linear, top 1s linear, opacity 0.5s ease;
+  }
+
+  .horizon-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20%;
+    border-top: 1px dashed rgba(255, 255, 255, 0.3);
+  }
+
+  .sunmoon-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    text-align: left;
+  }
+
+  .sunmoon-details strong {
+    color: var(--text-color);
+  }
+
+  .aqi-card {
+    text-align: center;
+  }
+
+  .aqi-value {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .aqi-category {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .aqi-details {
+    color: var(--muted-color);
+    font-size: 0.85rem;
+  }
   
   #refresh-btn {
     background: #e4e8eb;
@@ -452,6 +512,8 @@ body.fx-active-stars .fx-stars {
   }
 </style>
 <script src="chart.umd.min.js"></script>
+<script src="suncalc.js"></script>
+  
 </head>
 <body>
 
@@ -479,6 +541,23 @@ body.fx-active-stars .fx-stars {
     <img id="camera-img" src="data/camera.jpg" alt="Latest snapshot from the weather station camera">
   </div>
 
+<div class="camera-card">
+    <h2>Sun &amp; Moon</h2>
+    <div class="sky-box" id="sky-box">
+      <div class="sky-body" id="sun-body">☀️</div>
+      <div class="sky-body" id="moon-body">🌙</div>
+      <div class="horizon-line"></div>
+    </div>
+    <div class="sunmoon-details" id="sunmoon-details"></div>
+  </div>
+
+  <div class="camera-card aqi-card">
+    <h2>Air Quality</h2>
+    <div class="aqi-value" id="aqi-value">--</div>
+    <div class="aqi-category" id="aqi-category">Loading...</div>
+    <div class="aqi-details" id="aqi-details"></div>
+  </div>
+    
 <div class="camera-card">
     <h2>Today's Forecast</h2>
     <div class="forecast-periods" id="forecast-periods">
@@ -1104,7 +1183,107 @@ for (let i = 0; i < STAR_COUNT; i++) {
     
   }
 
+// ---------- Sun & Moon tracker (client-side, via SunCalc — no fetching needed) ----------
+  const SUNMOON_LAT = 40.604;
+  const SUNMOON_LON = -80.286;
 
+  function getMoonPhaseEmoji(phase) {
+    const phases = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+    return phases[Math.round(phase * 8) % 8];
+  }
+
+  function getMoonPhaseName(phase) {
+    const names = ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'];
+    return names[Math.round(phase * 8) % 8];
+  }
+
+  function positionSkyBody(el, altitudeRad, azimuthRad) {
+    const altDeg = altitudeRad * 180 / Math.PI;
+    const azDeg = azimuthRad * 180 / Math.PI;
+
+    // SunCalc's azimuth is measured from south (0°) toward west — this maps
+    // it so south sits center-screen, matching how sun-path diagrams read.
+    const leftPercent = ((azDeg + 180) / 360) * 100;
+    const clampedAlt = Math.max(-15, Math.min(90, altDeg));
+    const topPercent = 95 - ((clampedAlt + 15) / 105) * 90;
+    const opacity = altDeg <= -15 ? 0 : Math.min(1, (altDeg + 15) / 15);
+
+    el.style.left = `${leftPercent}%`;
+    el.style.top = `${topPercent}%`;
+    el.style.opacity = opacity;
+  }
+
+  function updateSunMoonTracker() {
+    const now = new Date();
+
+    const sunPos = SunCalc.getPosition(now, SUNMOON_LAT, SUNMOON_LON);
+    const sunTimes = SunCalc.getTimes(now, SUNMOON_LAT, SUNMOON_LON);
+    const moonPos = SunCalc.getMoonPosition(now, SUNMOON_LAT, SUNMOON_LON);
+    const moonIllum = SunCalc.getMoonIllumination(now);
+    const moonTimes = SunCalc.getMoonTimes(now, SUNMOON_LAT, SUNMOON_LON);
+
+    positionSkyBody(document.getElementById('sun-body'), sunPos.altitude, sunPos.azimuth);
+    positionSkyBody(document.getElementById('moon-body'), moonPos.altitude, moonPos.azimuth);
+    document.getElementById('moon-body').textContent = getMoonPhaseEmoji(moonIllum.phase);
+
+    const fmt = (d) => d ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '—';
+
+    let moonRiseSetText;
+    if (moonTimes.alwaysUp) {
+      moonRiseSetText = 'Up all day';
+    } else if (moonTimes.alwaysDown) {
+      moonRiseSetText = 'Down all day';
+    } else {
+      moonRiseSetText = `${fmt(moonTimes.rise)} / ${fmt(moonTimes.set)}`;
+    }
+
+    document.getElementById('sunmoon-details').innerHTML = `
+      <div><strong>Sunrise</strong><br>${fmt(sunTimes.sunrise)}</div>
+      <div><strong>Solar Noon</strong><br>${fmt(sunTimes.solarNoon)}</div>
+      <div><strong>Sunset</strong><br>${fmt(sunTimes.sunset)}</div>
+      <div><strong>Moonrise / Moonset</strong><br>${moonRiseSetText}</div>
+      <div><strong>Moon Phase</strong><br>${getMoonPhaseName(moonIllum.phase)} (${Math.round(moonIllum.fraction * 100)}%)</div>
+    `;
+  }
+
+  function initSunMoonTracker() {
+    updateSunMoonTracker();
+    setInterval(updateSunMoonTracker, 60 * 1000); // reposition every minute
+  }
+
+  // ---------- Air Quality ----------
+  const AQI_COLORS = {
+    'Good': '#00e400',
+    'Moderate': '#c9c900',
+    'Unhealthy for Sensitive Groups': '#ff7e00',
+    'Unhealthy': '#ff4040',
+    'Very Unhealthy': '#a34fd6',
+    'Hazardous': '#c2415a',
+  };
+
+  async function loadAQI(forceRefresh = false) {
+    try {
+      const url = forceRefresh ? `data/aqi.json?t=${Date.now()}` : 'data/aqi.json';
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      const valueEl = document.getElementById('aqi-value');
+      const categoryEl = document.getElementById('aqi-category');
+      const detailsEl = document.getElementById('aqi-details');
+
+      valueEl.textContent = data.us_aqi ?? '--';
+      categoryEl.textContent = data.category || 'Unavailable';
+      const color = AQI_COLORS[data.category] || 'var(--accent-color)';
+      valueEl.style.color = color;
+      categoryEl.style.color = color;
+
+      detailsEl.textContent = `PM2.5: ${data.pm2_5 ?? '—'} µg/m³ · PM10: ${data.pm10 ?? '—'} µg/m³ · Ozone: ${data.ozone ?? '—'} µg/m³`;
+    } catch (err) {
+      console.warn('Could not load AQI data:', err.message);
+      document.getElementById('aqi-category').textContent = 'Unavailable';
+    }
+  }
   
   // ---------- Weather-based color/icon themes ----------
   // NOTE: The Weather Underground API only gives raw sensor readings
@@ -1290,6 +1469,7 @@ const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
     await loadData(true);
     await loadHistory(true);
     await loadForecast(true);
+    await loadAQI(true);
     refreshOutlookImages();
 
     const triggered = await triggerWorkflow();
@@ -1325,6 +1505,9 @@ if (triggered) {
   initOutlookCarousel();
   initRangeButtons();
   initWeatherFx();
+  initSunMoonTracker();
+  loadAQI();
+  setInterval(loadAQI, 15 * 60 * 1000); // AQI doesn't change minute-to-minute
 
   
 // Chart.js sizes canvases based on the container's dimensions at creation
