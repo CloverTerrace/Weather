@@ -44,7 +44,9 @@ jobs:
         
       - name: Fetch air quality
         continue-on-error: true   # don't let an AQI hiccup block weather data updates
-        run: python scripts/fetch_aqi.py
+        env:
+          PURPLEAIR_API_KEY: ${{ secrets.PURPLEAIR_API_KEY }}
+        run: python scripts/fetch_air_quality.py
 
       - name: Fetch current SPC outlook
         continue-on-error: true   # don't let an outlook hiccup block weather data updates
