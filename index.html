@@ -672,6 +672,7 @@ body.fx-active-stars .fx-stars {
     { key: 'precipTotal',    label: 'Precip Today',  unit: 'in' },
     { key: 'solarRadiation', label: 'Solar Rad.',    unit: 'W/m²' },
     { key: 'uv',             label: 'UV Index',      unit: ''   },
+    { key: 'aqiDisplay', label: 'Air Quality (AQI)', unit: '' },
   ];
 
   // Path to the rolling history file the fetch script maintains.
@@ -822,6 +823,7 @@ body.fx-active-stars .fx-stars {
   async function loadHistory(forceRefresh = false) {
     try {
       const url = forceRefresh ? `${HISTORY_URL}?t=${Date.now()}` : HISTORY_URL;
+      const aqUrl = forceRefresh ? `data/air_quality.json?t=${Date.now()}` : 'data/air_quality.json';
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const history = await res.json();
@@ -1251,39 +1253,7 @@ for (let i = 0; i < STAR_COUNT; i++) {
     setInterval(updateSunMoonTracker, 60 * 1000); // reposition every minute
   }
 
-  // ---------- Air Quality ----------
-  const AQI_COLORS = {
-    'Good': '#00e400',
-    'Moderate': '#c9c900',
-    'Unhealthy for Sensitive Groups': '#ff7e00',
-    'Unhealthy': '#ff4040',
-    'Very Unhealthy': '#a34fd6',
-    'Hazardous': '#c2415a',
-  };
-
-  async function loadAQI(forceRefresh = false) {
-    try {
-      const url = forceRefresh ? `data/aqi.json?t=${Date.now()}` : 'data/aqi.json';
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      const valueEl = document.getElementById('aqi-value');
-      const categoryEl = document.getElementById('aqi-category');
-      const detailsEl = document.getElementById('aqi-details');
-
-      valueEl.textContent = data.us_aqi ?? '--';
-      categoryEl.textContent = data.category || 'Unavailable';
-      const color = AQI_COLORS[data.category] || 'var(--accent-color)';
-      valueEl.style.color = color;
-      categoryEl.style.color = color;
-
-      detailsEl.textContent = `PM2.5: ${data.pm2_5 ?? '—'} µg/m³ · PM10: ${data.pm10 ?? '—'} µg/m³ · Ozone: ${data.ozone ?? '—'} µg/m³`;
-    } catch (err) {
-      console.warn('Could not load AQI data:', err.message);
-      document.getElementById('aqi-category').textContent = 'Unavailable';
-    }
-  }
+      
   
   // ---------- Weather-based color/icon themes ----------
   // NOTE: The Weather Underground API only gives raw sensor readings
@@ -1383,11 +1353,21 @@ function shouldShowField(field, data) {
   }
 
   async function loadData(forceRefresh = false) {
-    try {
-      const url = forceRefresh ? `${DATA_URL}?t=${Date.now()}` : DATA_URL;
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+  try {
+    const url = forceRefresh ? `${DATA_URL}?t=${Date.now()}` : DATA_URL;
+    const aqUrl = forceRefresh ? `data/air_quality.json?t=${Date.now()}` : 'data/air_quality.json';
+
+    const [res, aqRes] = await Promise.all([
+      fetch(url, { cache: 'no-store' }),
+      fetch(aqUrl, { cache: 'no-store' }).catch(() => null), // don't let AQI failure break the whole page
+    ]);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (aqRes && aqRes.ok) {
+      const aqData = await aqRes.json();
+      Object.assign(data, aqData); // merges aqiDisplay, pm25, etc. into the same object renderCards uses
+    }
 
       renderCards(data);
       applyTheme(classifyWeather(data));
