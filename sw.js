@@ -14,6 +14,7 @@ const SHELL_FILES = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './chart.umd.min.js',
+  './suncalc.js',
 ];
 
 self.addEventListener('install', (event) => {
