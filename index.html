@@ -1291,7 +1291,7 @@ const AQI_SMOKE_THRESHOLD = 150;
 // Standard EPA AQI category colors, used to color the AQI card's number.
 function getAqiColor(aqi) {
   if (aqi === undefined || aqi === null) return null;
-  if (aqi <= 50) return '#00e400';   // Good
+  if (aqi <= 50) return '#54ab7c';   // Good
   if (aqi <= 100) return '#ffeb3b';  // Moderate
   if (aqi <= 150) return '#ff7e00';  // Unhealthy for Sensitive Groups
   if (aqi <= 200) return '#ff4136';  // Unhealthy
@@ -1583,8 +1583,7 @@ if (triggered) {
   }
 </script>
 
- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
+
   
   
 </body>
