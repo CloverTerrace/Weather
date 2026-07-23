@@ -1283,7 +1283,7 @@ const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
 
     isRefreshing = true;
     refreshBtn.disabled = true;
-    refreshBtn.textContent = '🔄 Triggering update...';
+    refreshBtn.textContent = '🌪️ Triggering update...';
 
     // Refresh whatever's already in the data files right now (cache-busted),
     // regardless of whether triggering a brand-new run succeeds below.
@@ -1294,9 +1294,9 @@ const REFRESH_COOLDOWN_MS = 10 * 60 * 1000;
 
     const triggered = await triggerWorkflow();
 if (triggered) {
-  status.textContent = 'Update triggered! New data should appear within a minute or two.';
+  status.textContent = '☀️ Update triggered! New data should appear within a minute or two.';
 } else {
-  status.textContent = "Couldn't reach the update trigger — showing latest available data instead.";
+  status.textContent = "🌩️ Couldn't reach the update trigger — showing latest available data instead.";
 }
 
     // Start the cooldown regardless of success/failure, so repeated quick
