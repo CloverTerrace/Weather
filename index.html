@@ -1336,9 +1336,12 @@ function shouldShowField(field, data) {
     const data = await res.json();
 
     if (aqRes && aqRes.ok) {
-      const aqData = await aqRes.json();
-      Object.assign(data, aqData); // merges aqiDisplay, pm25, etc. into the same object renderCards uses
-    }
+  const aqData = await aqRes.json();
+  // Ensure aqiDisplay is populated regardless of whether the JSON key is 'aqi' or 'aqiDisplay'
+  data.aqiDisplay = aqData.aqiDisplay ?? aqData.aqi ?? aqData.AQI;
+  Object.assign(data, aqData);
+}
+
 
       renderCards(data);
       applyTheme(classifyWeather(data));
