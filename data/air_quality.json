@@ -2,8 +2,8 @@
   "aqi": 17,
   "aqiCategory": "Good",
   "aqiDisplay": "17 (Good)",
-  "pm25": 4.1,
-  "humidity": 41,
-  "sensorLastSeen": "2026-07-24T16:59:01+00:00",
-  "fetchedAt": "2026-07-24T17:01:01.096715+00:00"
+  "pm25": 4.0,
+  "humidity": 40,
+  "sensorLastSeen": "2026-07-24T17:03:02+00:00",
+  "fetchedAt": "2026-07-24T17:04:31.497773+00:00"
 }
