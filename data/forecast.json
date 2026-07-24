@@ -4,9 +4,9 @@
     "temperature": 81,
     "temperatureUnit": "F",
     "windSpeed": "5 mph",
-    "windDirection": "E",
-    "shortForecast": "Partly Sunny",
-    "detailedForecast": "Partly sunny, with a high near 81. East wind around 5 mph.",
+    "windDirection": "SE",
+    "shortForecast": "Mostly Cloudy",
+    "detailedForecast": "Mostly cloudy, with a high near 81. Southeast wind around 5 mph.",
     "isDaytime": true
   },
   {
