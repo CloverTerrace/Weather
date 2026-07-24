@@ -1,16 +1,6 @@
 [
   {
-    "name": "Overnight",
-    "temperature": 54,
-    "temperatureUnit": "F",
-    "windSpeed": "0 to 3 mph",
-    "windDirection": "NE",
-    "shortForecast": "Mostly Clear",
-    "detailedForecast": "Mostly clear, with a low around 54. Northeast wind 0 to 3 mph.",
-    "isDaytime": false
-  },
-  {
-    "name": "Friday",
+    "name": "Today",
     "temperature": 81,
     "temperatureUnit": "F",
     "windSpeed": "5 mph",
@@ -20,7 +10,7 @@
     "isDaytime": true
   },
   {
-    "name": "Friday Night",
+    "name": "Tonight",
     "temperature": 64,
     "temperatureUnit": "F",
     "windSpeed": "5 mph",
@@ -38,5 +28,15 @@
     "shortForecast": "Chance Showers And Thunderstorms",
     "detailedForecast": "A slight chance of rain showers between 8am and noon, then a chance of showers and thunderstorms. Partly sunny, with a high near 82. South wind 1 to 5 mph. Chance of precipitation is 40%.",
     "isDaytime": true
+  },
+  {
+    "name": "Saturday Night",
+    "temperature": 62,
+    "temperatureUnit": "F",
+    "windSpeed": "0 to 3 mph",
+    "windDirection": "W",
+    "shortForecast": "Chance Showers And Thunderstorms then Partly Cloudy",
+    "detailedForecast": "A chance of showers and thunderstorms before 7pm, then a slight chance of showers and thunderstorms between 7pm and 8pm. Partly cloudy, with a low around 62. West wind 0 to 3 mph. Chance of precipitation is 30%.",
+    "isDaytime": false
   }
 ]
