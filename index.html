@@ -12,7 +12,7 @@
   
   :root {
     --bg-color: #000000;
-    --card-color: #7C98B3;
+    --card-color: #333333;
     --accent-color: #CEE5F2;
     --text-color: #ffffff;
     --muted-color: #ffffff;
@@ -449,7 +449,6 @@ body.fx-active-smoke .fx-smoke {
     to { transform: translateX(120vw); }
   }
 
-  /* Respects visitors who've asked their device to reduce motion. */
   @media (prefers-reduced-motion: reduce) {
     .raindrop, .cloud-shape, .star {
       animation: none !important;
@@ -566,8 +565,7 @@ body.fx-active-smoke .fx-smoke {
   <div id="error-banner"></div>
 
   <div class="grid" id="grid">
-    <!-- Cards are injected by JS below -->
-  </div>
+    </div>
 
   
 
@@ -579,7 +577,6 @@ body.fx-active-smoke .fx-smoke {
   <div class="camera-card">
     <h2>Today's Forecast</h2>
     <div class="forecast-periods" id="forecast-periods">
-      <!-- Forecast period cards are injected by JS below -->
     </div>
   </div>
 
@@ -683,12 +680,12 @@ body.fx-active-smoke .fx-smoke {
   </div>
     
 <script>
-  // Path to the JSON file the GitHub Action keeps updated.
+  // path to the JSON file the GitHub Action keeps updated.
   const DATA_URL = 'data/weather.json';
-  // How often (ms) the page re-fetches the file to check for new data.
+  // how often (ms) the page re-fetches the file to check for new data.
   const REFRESH_INTERVAL_MS = 60 * 1000;
 
-  // Define which fields to show, in order, and how to label/format them.
+  // which fields to show, in order, and how to label/format them.
   // Add, remove, or reorder entries here to customize the dashboard.
   const FIELDS = [
     { key: 'temp',           label: 'Temperature',   unit: '°F' },
@@ -707,7 +704,7 @@ body.fx-active-smoke .fx-smoke {
     { key: 'aqiDisplay',     label: 'Air Quality (AQI)', unit: '' },
   ];
 
-  // Path to the rolling history file the fetch script maintains.
+  // path to the history file for fetch script.
   const HISTORY_URL = 'data/history.json';
 
   const grid = document.getElementById('grid');
@@ -731,7 +728,7 @@ body.fx-active-smoke .fx-smoke {
     const ctx = document.getElementById('historyChart').getContext('2d');
 
     if (historyChart) {
-      // Update in place rather than recreating, so the chart doesn't flicker on refresh.
+    
       historyChart.data.labels = labels;
       historyChart.data.datasets[0].data = tempData;
       historyChart.data.datasets[1].data = humidityData;
@@ -797,7 +794,7 @@ body.fx-active-smoke .fx-smoke {
     });
   }
 
-  // Time range options for the historical charts, in hours.
+  // Time range options for the historical charts.
   const RANGE_OPTIONS = [
     { hours: 24, label: '24 Hours' },
     { hours: 48, label: '2 Days' },
@@ -807,7 +804,7 @@ body.fx-active-smoke .fx-smoke {
   ];
 
   let fullHistory = [];       // the complete fetched dataset, unfiltered
-  let currentRangeHours = 168; // default: 7 days, matches your existing default
+  let currentRangeHours = 168; // 7 days
 
   function filterHistoryByRange(history, hours) {
     const cutoff = Date.now() - hours * 60 * 60 * 1000;
@@ -932,8 +929,7 @@ body.fx-active-smoke .fx-smoke {
     });
   }
 
-  // Buckets history readings into 8 compass directions and averages wind
-  // speed for each — a simple "wind rose" showing prevailing direction.
+  // Wind rose.
   const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
   function computeWindRose(history) {
@@ -1142,7 +1138,6 @@ function refreshOutlookImages() {
       });
     });
 
-    // Keep the active tab in sync when the user swipes/scrolls manually.
     scroller.addEventListener('scroll', () => {
       const index = Math.round(scroller.scrollLeft / scroller.clientWidth);
       tabs.forEach((tab, i) => tab.classList.toggle('active', i === index));
@@ -1172,13 +1167,13 @@ function refreshOutlookImages() {
       cloud.style.animationDuration = `${70 + Math.random() * 40}s`;
       cloud.style.animationDelay = `${Math.random() * -60}s`;
 
-      // Give each cloud its own overall size and "depth" (fainter = further away).
+      // give each cloud its own overall size and "depth" (fainter = further away).
       const scale = 0.7 + Math.random() * 0.8;
       const depthOpacity = 0.3 + Math.random() * 0.4;
       cloud.style.transform = `scale(${scale})`;
       cloud.style.opacity = depthOpacity;
 
-      // Build a fluffy silhouette from several overlapping, randomized puffs
+      // build a fluffy silhouette from several overlapping, randomized puffs
       // instead of one uniform blob, so no two clouds look identical.
       const puffCount = 4 + Math.floor(Math.random() * 3); // 4-6 puffs
       for (let p = 0; p < puffCount; p++) {
@@ -1206,7 +1201,7 @@ for (let i = 0; i < STAR_COUNT; i++) {
   star.style.height = `${size}px`;
   star.style.left = `${Math.random() * 100}%`;
   star.style.top = `${Math.random() * 70}%`; // keep clear of the horizon area
-  // Slow, staggered twinkle — each star drifts at its own gentle pace.
+  // slow, staggered twinkle — each star drifts at its own gentle pace.
   star.style.animationDuration = `${3 + Math.random() * 5}s`;
   star.style.animationDelay = `${Math.random() * -8}s`;
   star.style.setProperty('--star-min-opacity', (0.1 + Math.random() * 0.2).toFixed(2));
@@ -1223,7 +1218,7 @@ for (let i = 0; i < STAR_COUNT; i++) {
       puff.style.width = `${size}px`;
       puff.style.height = `${size * 0.6}px`;
       puff.style.top = `${Math.random() * 90}%`;
-      // Slow and heavy — meant to feel like a settled haze, not moving clouds.
+      // slow and heavy — meant to feel like a settled haze, not moving clouds.
       puff.style.animationDuration = `${150 + Math.random() * 100}s`;
       puff.style.animationDelay = `${Math.random() * -120}s`;
       puff.style.opacity = 0.4 + Math.random() * 0.3;
@@ -1235,10 +1230,10 @@ for (let i = 0; i < STAR_COUNT; i++) {
   const SUNMOON_LAT = 40.604;
   const SUNMOON_LON = -80.286;
 
-  // Real NASA lunar imagery (LRO/LROC), one representative image per
+  // real NASA lunar imagery (LRO/LROC), one representative image per
   // named phase — from NASA SVS #4310, "Moon Phases Loop".
   const MOON_PHASE_IMAGES = [
-    null, // New Moon — no distinct NASA image for this one; shown as a plain dark disc instead
+    null, // new moon — shown as a plain dark disc
     'https://svs.gsfc.nasa.gov/vis/a000000/a004300/a004310/ph1_waxing_crescent_2k_print.jpg',
     'https://svs.gsfc.nasa.gov/vis/a000000/a004300/a004310/ph2_first_quarter_2k_print.jpg',
     'https://svs.gsfc.nasa.gov/vis/a000000/a004300/a004310/ph3_waxing_gibbous_2k_print.jpg',
@@ -1322,31 +1317,30 @@ for (let i = 0; i < STAR_COUNT; i++) {
       
   
   // ---------- Weather-based color/icon themes ----------
-  // NOTE: The Weather Underground API only gives raw sensor readings
+  // NOTE: the Weather Underground API only gives raw sensor readings
   // (temp, precip rate, wind speed, solar radiation, etc.) — not an actual
-  // "condition" label. So this is a heuristic guess at current conditions
-  // based on those numbers, not a real forecast/condition read.
+  // "condition" label. soo, this is a heuristic guess at current conditions
+  // based on those numbers, not a real forecast/condition read! manage your expectations.
 
-  // Tune these thresholds (mph / in-hr / °F) to match your climate.
   const WINDY_WIND_MPH = 11;           // sustained wind or gust above this = windy theme
   const THUNDERSTORM_WIND_MPH = 15;    // wind above this...
   const THUNDERSTORM_PRECIP_INHR = 0.1; // ...combined with precip rate above this = thunderstorm theme
   const EXTREME_HEAT_TEMP_F = 90;      // temp (or heat index, if higher) at/above this = extreme heat theme
 
 // AQI at or above this triggers the smoke haze effect — 150 is the EPA's
-// "Unhealthy" cutoff, the point where air quality starts affecting everyone,
-// not just sensitive groups. Adjust to taste.
+// "unhealthy" cutoff, the point where air quality starts affecting everyone,
+// not just sensitive groups.
 const AQI_SMOKE_THRESHOLD = 150;
 
-// Standard EPA AQI category colors, used to color the AQI card's number.
+// standard EPA AQI category colors, with muted green and yellow for , used to color the AQI card's number.
 function getAqiColor(aqi) {
   if (aqi === undefined || aqi === null) return null;
-  if (aqi <= 50) return '#54ab7c';   // Good
-  if (aqi <= 100) return '#ffeb3b';  // Moderate
-  if (aqi <= 150) return '#ff7e00';  // Unhealthy for Sensitive Groups
-  if (aqi <= 200) return '#ff4136';  // Unhealthy
-  if (aqi <= 300) return '#8f3f97';  // Very Unhealthy
-  return '#7e0023';                  // Hazardous
+  if (aqi <= 50) return '#54ab7c';   // good
+  if (aqi <= 100) return '#ffeb3b';  // moderate
+  if (aqi <= 150) return '#ff7e00';  // unhealthy for sensitive groups
+  if (aqi <= 200) return '#ff4136';  // unhealthy
+  if (aqi <= 300) return '#8f3f97';  // very unhealthy
+  return '#7e0023';                  // hazardous
 }
 
 const THEMES = {
@@ -1372,8 +1366,8 @@ const THEMES = {
     const wind = Math.max(data.windSpeed || 0, data.windGust || 0);
     const feelsLike = Math.max(data.temp || 0, data.heatIndex || 0);
 
-    // First figure out the "base" condition, independent of day/night —
-    // then combine it with isNight below. This way every condition gets
+    // first figure out the "base" condition, independent of day/night —
+    // then combine it with isNight below. this way every condition gets
     // an automatic night counterpart without repeating the thresholds.
     let condition = null;
     if (precip >= THUNDERSTORM_PRECIP_INHR && wind >= THUNDERSTORM_WIND_MPH) condition = 'thunderstorm';
@@ -1386,7 +1380,7 @@ const THEMES = {
       return isNight ? `${condition}Night` : condition;
     }
 
-    // No active condition — fall back to plain night/sunny/cloudy.
+    // if no active condition — fall back to plain night/sunny/cloudy.
     if (isNight) return 'night';
     if ((data.solarRadiation || 0) > 650) return 'sunny';
     return 'cloudy';
@@ -1401,12 +1395,12 @@ const THEMES = {
     root.setProperty('--muted-color', theme.muted);
     document.getElementById('weather-icon').textContent = theme.icon;
 
-    // Toggle the CSS rain/cloud effects based on the active theme.
+    // toggle the CSS rain/cloud effects based on the active theme.
     const rainThemes = ['rainy', 'rainyNight', 'thunderstorm', 'thunderstormNight'];
     document.body.classList.toggle('fx-active-rain', rainThemes.includes(themeKey));
     document.body.classList.toggle('fx-active-cloudy', themeKey === 'cloudy');
     document.body.classList.toggle('fx-active-stars', themeKey === 'night');
-    // Smoke is layered independently of the main condition theme — a hazy
+    // smoke is layered independently of the main condition theme — a hazy
     // day can be sunny, cloudy, or anything else underneath the haze.
     document.body.classList.toggle('fx-active-smoke', aqi !== undefined && aqi !== null && aqi >= AQI_SMOKE_THRESHOLD);
   }
