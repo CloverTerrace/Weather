@@ -1,9 +1,9 @@
 {
-  "aqi": 13,
+  "aqi": 15,
   "aqiCategory": "Good",
-  "aqiDisplay": "13 (Good)",
-  "pm25": 3.1,
-  "humidity": 44,
-  "sensorLastSeen": "2026-07-24T14:38:47+00:00",
-  "fetchedAt": "2026-07-24T14:44:22.873573+00:00"
+  "aqiDisplay": "15 (Good)",
+  "pm25": 3.6,
+  "humidity": 41,
+  "sensorLastSeen": "2026-07-24T16:49:00+00:00",
+  "fetchedAt": "2026-07-24T16:51:11.799908+00:00"
 }
