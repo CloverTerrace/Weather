@@ -4,9 +4,9 @@
     "temperature": 81,
     "temperatureUnit": "F",
     "windSpeed": "5 mph",
-    "windDirection": "SE",
+    "windDirection": "E",
     "shortForecast": "Mostly Cloudy",
-    "detailedForecast": "Mostly cloudy, with a high near 81. Southeast wind around 5 mph.",
+    "detailedForecast": "Mostly cloudy, with a high near 81. East wind around 5 mph.",
     "isDaytime": true
   },
   {
