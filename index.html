@@ -462,8 +462,8 @@ body.fx-active-smoke .fx-smoke {
   .sky-box {
     position: relative;
     width: 100%;
-    height: 160px;
-    background: linear-gradient(to bottom, #1a2b4a, #4a6fa5 60%, #87ceeb 100%);
+    height: 220px;
+    background: linear-gradient(to bottom, #05070d, #0d1b2e 55%, #1b3358 100%);
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 1rem;
@@ -471,33 +471,35 @@ body.fx-active-smoke .fx-smoke {
 
   .sky-body {
     position: absolute;
-    font-size: 1.6rem;
     transform: translate(-50%, -50%);
     transition: left 1s linear, top 1s linear, opacity 0.5s ease;
   }
 
-  .moon-body-img {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
+  .sky-body-frame {
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+  }
+
+  .sun-body-img, .moon-body-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.8);
   }
 
   .moon-body-newmoon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.15);
-  }
-
-  .sun-body-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 10px rgba(255, 200, 50, 0.6);
+    width: 100%;
+    height: 100%;
+    background: #141414;
   }
 
   .horizon-line {
@@ -585,7 +587,9 @@ body.fx-active-smoke .fx-smoke {
     <h2>Sun &amp; Moon</h2>
     <div class="sky-box" id="sky-box">
       <div class="sky-body" id="sun-body">
-        <img class="sun-body-img" src="https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMII.jpg" alt="Current sun" onerror="this.replaceWith(document.createTextNode('☀️'));">
+        <div class="sky-body-frame">
+          <img class="sun-body-img" src="https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMII.jpg" alt="Current sun" onerror="this.replaceWith(document.createTextNode('☀️'));">
+        </div>
       </div>
       <div class="sky-body" id="moon-body"></div>
       <div class="horizon-line"></div>
@@ -1249,9 +1253,9 @@ for (let i = 0; i < STAR_COUNT; i++) {
     const imageUrl = MOON_PHASE_IMAGES[index];
 
     if (imageUrl) {
-      el.innerHTML = `<img class="moon-body-img" src="${imageUrl}" alt="Moon phase">`;
+      el.innerHTML = `<div class="sky-body-frame"><img class="moon-body-img" src="${imageUrl}" alt="Moon phase"></div>`;
     } else {
-      el.innerHTML = `<div class="moon-body-newmoon"></div>`;
+      el.innerHTML = `<div class="sky-body-frame"><div class="moon-body-newmoon"></div></div>`;
     }
   }
 
@@ -1269,7 +1273,7 @@ for (let i = 0; i < STAR_COUNT; i++) {
     // it so south sits center-screen, matching how sun-path diagrams read.
     const leftPercent = ((azDeg + 180) / 360) * 100;
     const clampedAlt = Math.max(-15, Math.min(90, altDeg));
-    const topPercent = 95 - ((clampedAlt + 15) / 105) * 90;
+    const topPercent = 88 - ((clampedAlt + 15) / 105) * 74;
     const opacity = altDeg <= -15 ? 0 : Math.min(1, (altDeg + 15) / 15);
 
     el.style.left = `${leftPercent}%`;
@@ -1412,7 +1416,7 @@ function shouldShowField(field, data) {
       return data.temp >= 80; // heat index isn't meaningful below this
     }
     if (field.key === 'windChill') {
-      return data.temp <= 50 && (data.windSpeed || 0) >= 3; // wind chill isn't meaningful otherwise
+      return data.temp <= 50 && (data.windSpeed || 0) >= 3; // wind chill isn't really meaningful otherwise
     }
     return true; // every other field always shows
   }
@@ -1444,7 +1448,7 @@ function shouldShowField(field, data) {
 
     const [res, aqRes] = await Promise.all([
       fetch(url, { cache: 'no-store' }),
-      fetch(aqUrl, { cache: 'no-store' }).catch(() => null), // don't let AQI failure break the whole page
+      fetch(aqUrl, { cache: 'no-store' }).catch(() => null), // don't let AQI failure break the whole page pls
     ]);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -1464,8 +1468,8 @@ function shouldShowField(field, data) {
       errorBanner.style.display = 'none';
       status.textContent = `Last observation: ${data.obsTimeLocal || 'unknown'} · Page checked: ${new Date().toLocaleTimeString()}`;
 
-      // Cache-bust the camera image so the browser re-fetches the file
-      // instead of showing a stale cached copy of the same filename.
+      // To prevent the camera image from becoming stale due to an old image
+      // of the same filename being cached.
       const cameraImg = document.getElementById('camera-img');
       cameraImg.src = `data/camera.jpg?t=${Date.now()}`;
     } catch (err) {
@@ -1476,8 +1480,8 @@ function shouldShowField(field, data) {
   }
 
   // ---------- Manual "Refresh Now" trigger with a 10-minute cooldown ----------
-// Tries each trigger endpoint in order — if one is blocked or down,
-// the next one picks up the slack.
+// Tries each trigger endpoint in order.. if one is blocked or down,
+// the next one is tried.
 const TRIGGER_ENDPOINTS = [
   'https://weather-refresh-trigger.cloverwx4.workers.dev/',
   'https://weather-refresh-trigger.cloverwx.deno.net/',
